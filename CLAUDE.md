@@ -26,7 +26,7 @@ Personal single-user fitness tracking PWA for Vinos. Source of truth for scope, 
 - `public/exercises/*.svg` — hand-drawn exercise illustrations (no external licensing dependency)
 
 ## Current Sprint
-Building M1 (auth + PWA shell) and M2 (core logging loop) per PRD §6. Code for both is written; blocked on Vinos creating a Neon project and providing `DATABASE_URL` (see PRD — Neon has no MCP integration, this step is manual). Once unblocked: run migrations, deploy to Vercel, verify end-to-end on a real gym session before M3/M4 (program editor, analytics) begin.
+M1 and M2 shipped and verified live (2026-07-13): deployed to Vercel, Neon DB migrated + seeded, login/rotation/set-logging/offline-queue all confirmed working against production. Gate per PRD §6: **use the app at 2-3 real gym sessions before M3/M4 (program editor, analytics, nutrition, body metrics UI) begin.**
 
 ## Don't
 - Don't build the program editor, analytics/progress screens, or nutrition entry yet — gated on 2-3 real gym sessions with the M2 logging loop first (PRD §6).
