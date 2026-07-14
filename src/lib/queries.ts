@@ -30,11 +30,19 @@ export type SetRow = {
   client_id: string | null;
 };
 
-export async function getActiveWorkout(): Promise<{ id: number; program_day_id: number } | null> {
-  const { rows } = await db.query<{ id: number; program_day_id: number }>(
-    `SELECT id, program_day_id FROM workouts WHERE completed_at IS NULL ORDER BY started_at DESC LIMIT 1`
+export async function getActiveWorkout(): Promise<{
+  id: number;
+  program_day_id: number;
+  notes: string | null;
+} | null> {
+  const { rows } = await db.query<{ id: number; program_day_id: number; notes: string | null }>(
+    `SELECT id, program_day_id, notes FROM workouts WHERE completed_at IS NULL ORDER BY started_at DESC LIMIT 1`
   );
   return rows[0] ?? null;
+}
+
+export async function updateWorkoutNotes(workoutId: number, notes: string): Promise<void> {
+  await db.query(`UPDATE workouts SET notes = $1 WHERE id = $2`, [notes, workoutId]);
 }
 
 export async function getNextProgramDayId(): Promise<number> {

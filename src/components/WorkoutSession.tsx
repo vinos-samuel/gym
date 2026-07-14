@@ -15,11 +15,15 @@ export function WorkoutSession({
   workoutId,
   dayName,
   exercises,
+  initialNotes,
 }: {
   workoutId: number;
   dayName: string;
   exercises: ExerciseWithHistory[];
+  initialNotes: string;
 }) {
+  const [notes, setNotes] = useState(initialNotes);
+  const [notesOpen, setNotesOpen] = useState(initialNotes.length > 0);
   const [loggedByExercise, setLoggedByExercise] = useState<Record<number, LoggedSet[]>>(() => {
     const initial: Record<number, LoggedSet[]> = {};
     for (const ex of exercises) {
@@ -87,6 +91,14 @@ export function WorkoutSession({
     setFinishing(false);
   }
 
+  function handleSaveNotes() {
+    void fetch("/api/workouts/notes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ workoutId, notes }),
+    });
+  }
+
   async function handleUndoFinish() {
     setFinishing(true);
     try {
@@ -137,6 +149,25 @@ export function WorkoutSession({
       </header>
 
       {showRest && <RestTimer key={restKey} durationSeconds={REST_SECONDS} onDismiss={() => setShowRest(false)} />}
+
+      {notesOpen ? (
+        <textarea
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          onBlur={handleSaveNotes}
+          placeholder="Notes for today's session…"
+          rows={2}
+          className="rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50 dark:placeholder:text-zinc-600"
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={() => setNotesOpen(true)}
+          className="self-start text-sm text-zinc-400 underline dark:text-zinc-600"
+        >
+          + Add note
+        </button>
+      )}
 
       <div className="flex flex-col gap-3">
         {exercises.map((exercise) => (

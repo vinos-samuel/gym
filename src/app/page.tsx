@@ -18,7 +18,7 @@ export default async function TodayPage() {
   const programDayId = workout ? workout.program_day_id : await getNextProgramDayId();
   if (!workout) {
     const workoutId = await createWorkout(programDayId);
-    workout = { id: workoutId, program_day_id: programDayId };
+    workout = { id: workoutId, program_day_id: programDayId, notes: null };
   }
 
   const { day, exercises } = await getProgramDayWithExercises(programDayId);
@@ -32,5 +32,12 @@ export default async function TodayPage() {
     }))
   );
 
-  return <WorkoutSession workoutId={workout.id} dayName={day.name} exercises={exercisesWithHistory} />;
+  return (
+    <WorkoutSession
+      workoutId={workout.id}
+      dayName={day.name}
+      exercises={exercisesWithHistory}
+      initialNotes={workout.notes ?? ""}
+    />
+  );
 }
