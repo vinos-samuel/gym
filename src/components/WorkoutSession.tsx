@@ -67,6 +67,12 @@ export function WorkoutSession({
   }
 
   async function handleFinish() {
+    const message =
+      totalLogged < totalTarget
+        ? `You've only logged ${totalLogged} of ${totalTarget} sets. Finish workout anyway?`
+        : "Finish workout?";
+    if (!window.confirm(message)) return;
+
     setFinishing(true);
     try {
       await fetch("/api/workouts/complete", {
@@ -81,13 +87,35 @@ export function WorkoutSession({
     setFinishing(false);
   }
 
+  async function handleUndoFinish() {
+    setFinishing(true);
+    try {
+      await fetch("/api/workouts/reopen", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ workoutId }),
+      });
+      window.location.reload();
+    } catch {
+      setFinishing(false);
+    }
+  }
+
   if (finished) {
     return (
-      <div className="flex min-h-dvh flex-col items-center justify-center gap-2 bg-white px-6 text-center dark:bg-zinc-950">
+      <div className="flex min-h-dvh flex-col items-center justify-center gap-3 bg-white px-6 text-center dark:bg-zinc-950">
         <p className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">Nice work.</p>
         <p className="text-zinc-500">
           {totalLogged} of {totalTarget} sets logged. See you next session.
         </p>
+        <button
+          type="button"
+          onClick={handleUndoFinish}
+          disabled={finishing}
+          className="mt-4 text-sm text-zinc-400 underline disabled:opacity-50 dark:text-zinc-600"
+        >
+          {finishing ? "Reopening…" : "Not done — keep logging"}
+        </button>
       </div>
     );
   }

@@ -129,6 +129,10 @@ export async function completeWorkout(workoutId: number): Promise<void> {
   await db.query(`UPDATE workouts SET completed_at = now() WHERE id = $1`, [workoutId]);
 }
 
+export async function reopenWorkout(workoutId: number): Promise<void> {
+  await db.query(`UPDATE workouts SET completed_at = NULL WHERE id = $1`, [workoutId]);
+}
+
 export async function logSet(params: {
   workoutId: number;
   exerciseId: number;

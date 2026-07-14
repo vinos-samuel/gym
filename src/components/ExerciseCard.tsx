@@ -131,12 +131,7 @@ export function ExerciseCard({
               </div>
               <button
                 type="button"
-                onClick={() => {
-                  onLogSet(setNumber, weight, reps);
-                  const next = prefillFor(setNumber + 1);
-                  setWeight(next.weightKg);
-                  setReps(next.reps);
-                }}
+                onClick={() => onLogSet(setNumber, weight, reps)}
                 className="w-full rounded-xl bg-zinc-900 py-3 text-base font-medium text-zinc-50 active:bg-zinc-700 dark:bg-zinc-50 dark:text-zinc-950 dark:active:bg-zinc-300"
               >
                 Log set
