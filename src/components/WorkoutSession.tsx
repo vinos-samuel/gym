@@ -70,6 +70,21 @@ export function WorkoutSession({
     });
   }
 
+  function handleEditSet(exercise: ExerciseWithHistory, setNumber: number, weightKg: number, reps: number) {
+    setLoggedByExercise((prev) => ({
+      ...prev,
+      [exercise.exercise_id]: (prev[exercise.exercise_id] ?? []).map((s) =>
+        s.setNumber === setNumber ? { setNumber, weightKg, reps } : s
+      ),
+    }));
+
+    void fetch("/api/sets/edit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ workoutId, exerciseId: exercise.exercise_id, setNumber, weightKg, reps }),
+    });
+  }
+
   async function handleFinish() {
     const message =
       totalLogged < totalTarget
@@ -158,6 +173,7 @@ export function WorkoutSession({
             lastSets={exercise.lastSets}
             loggedSets={loggedByExercise[exercise.exercise_id] ?? []}
             onLogSet={(setNumber, weightKg, reps) => handleLogSet(exercise, setNumber, weightKg, reps)}
+            onEditSet={(setNumber, weightKg, reps) => handleEditSet(exercise, setNumber, weightKg, reps)}
           />
         ))}
       </div>

@@ -158,3 +158,17 @@ export async function logSet(params: {
   );
   return rows[0]?.id ?? null;
 }
+
+export async function updateSet(params: {
+  workoutId: number;
+  exerciseId: number;
+  setNumber: number;
+  weightKg: number;
+  reps: number;
+}): Promise<void> {
+  await db.query(
+    `UPDATE sets SET weight_kg = $1, reps = $2
+     WHERE workout_id = $3 AND exercise_id = $4 AND set_number = $5`,
+    [params.weightKg, params.reps, params.workoutId, params.exerciseId, params.setNumber]
+  );
+}

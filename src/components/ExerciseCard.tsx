@@ -23,11 +23,13 @@ export function ExerciseCard({
   lastSets,
   loggedSets,
   onLogSet,
+  onEditSet,
 }: {
   exercise: DayExercise;
   lastSets: SetRow[];
   loggedSets: LoggedSet[];
   onLogSet: (setNumber: number, weightKg: number, reps: number) => void;
+  onEditSet: (setNumber: number, weightKg: number, reps: number) => void;
 }) {
   const nextSetNumber = loggedSets.length + 1;
   const isDone = nextSetNumber > exercise.target_sets;
@@ -46,6 +48,15 @@ export function ExerciseCard({
   const [weight, setWeight] = useState(prefill.weightKg);
   const [reps, setReps] = useState(prefill.reps);
   const [expanded, setExpanded] = useState(false);
+  const [editingSetNumber, setEditingSetNumber] = useState<number | null>(null);
+  const [editWeight, setEditWeight] = useState(0);
+  const [editReps, setEditReps] = useState(0);
+
+  function startEditing(setNumber: number, current: LoggedSet) {
+    setEditingSetNumber(setNumber);
+    setEditWeight(current.weightKg);
+    setEditReps(current.reps);
+  }
 
   return (
     <div className="rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
@@ -91,17 +102,57 @@ export function ExerciseCard({
       <div className="mt-4 flex flex-col gap-2">
         {Array.from({ length: exercise.target_sets }, (_, i) => i + 1).map((setNumber) => {
           const logged = loggedSets.find((s) => s.setNumber === setNumber);
-          if (logged) {
+          if (logged && editingSetNumber === setNumber) {
             return (
               <div
                 key={setNumber}
-                className="flex items-center justify-between rounded-lg bg-zinc-50 px-3 py-2 text-sm text-zinc-500 dark:bg-zinc-800/50"
+                className="flex flex-col items-center gap-3 rounded-xl border border-zinc-200 p-3 dark:border-zinc-700"
+              >
+                <span className="text-sm font-medium text-zinc-500">Editing set {setNumber}</span>
+                <div className="flex items-center gap-6">
+                  <NumberStepper value={editWeight} onChange={setEditWeight} step={2.5} label="kg" />
+                  <NumberStepper
+                    value={editReps}
+                    onChange={setEditReps}
+                    step={trackingStep[exercise.tracking_type]}
+                    label={trackingLabel[exercise.tracking_type]}
+                  />
+                </div>
+                <div className="flex w-full gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditingSetNumber(null)}
+                    className="flex-1 rounded-xl bg-zinc-100 py-3 text-base font-medium text-zinc-900 active:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-50 dark:active:bg-zinc-700"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onEditSet(setNumber, editWeight, editReps);
+                      setEditingSetNumber(null);
+                    }}
+                    className="flex-1 rounded-xl bg-zinc-900 py-3 text-base font-medium text-zinc-50 active:bg-zinc-700 dark:bg-zinc-50 dark:text-zinc-950 dark:active:bg-zinc-300"
+                  >
+                    Save
+                  </button>
+                </div>
+              </div>
+            );
+          }
+          if (logged) {
+            return (
+              <button
+                key={setNumber}
+                type="button"
+                onClick={() => startEditing(setNumber, logged)}
+                className="flex items-center justify-between rounded-lg bg-zinc-50 px-3 py-2 text-sm text-zinc-500 active:bg-zinc-100 dark:bg-zinc-800/50 dark:active:bg-zinc-800"
               >
                 <span>Set {setNumber}</span>
                 <span className="font-medium text-zinc-700 dark:text-zinc-300">
                   ✓ {logged.weightKg}kg × {logged.reps}
                 </span>
-              </div>
+              </button>
             );
           }
           if (setNumber !== nextSetNumber) {
