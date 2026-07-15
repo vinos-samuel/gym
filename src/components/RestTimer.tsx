@@ -9,15 +9,27 @@ export function RestTimer({
   durationSeconds: number;
   onDismiss: () => void;
 }) {
+  const [endTime] = useState(() => Date.now() + durationSeconds * 1000);
   const [remaining, setRemaining] = useState(durationSeconds);
 
   useEffect(() => {
-    if (remaining <= 0) {
-      onDismiss();
-      return;
-    }
-    const id = setTimeout(() => setRemaining((r) => r - 1), 1000);
-    return () => clearTimeout(id);
+    const tick = () => {
+      const secondsLeft = Math.max(0, Math.round((endTime - Date.now()) / 1000));
+      setRemaining(secondsLeft);
+    };
+
+    tick();
+    const id = setInterval(tick, 1000);
+    document.addEventListener("visibilitychange", tick);
+
+    return () => {
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", tick);
+    };
+  }, [endTime]);
+
+  useEffect(() => {
+    if (remaining <= 0) onDismiss();
   }, [remaining, onDismiss]);
 
   const mm = Math.floor(remaining / 60);
