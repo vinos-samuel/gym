@@ -1,9 +1,9 @@
 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-<polyline points="48,70,55,90" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-<circle cx="48" cy="55" r="13" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-<polyline points="55,90,70,140" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-<polyline points="70,140,115,150" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-<polyline points="115,150,150,110" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-<polyline points="60,115,60,135" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-<rect x="130" y="94" width="40" height="12" rx="3" fill="currentColor"/>
+<polyline points="48,70,55,90" stroke="#71717a" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<circle cx="48" cy="55" r="13" stroke="#71717a" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<polyline points="55,90,70,140" stroke="#71717a" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<polyline points="70,140,115,150" stroke="#71717a" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<polyline points="115,150,150,110" stroke="#71717a" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<polyline points="60,115,60,135" stroke="#71717a" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<rect x="130" y="94" width="40" height="12" rx="3" fill="#d97706"/>
 </svg>

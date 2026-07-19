@@ -41,10 +41,12 @@ Personal single-user fitness tracking PWA for Vinos. Source of truth for scope, 
 - Notes save on blur, no offline queue — lower stakes than losing a set, and edited rarely enough that this is proportionate.
 - The reopen-workout undo only works in the same browser session right after tapping Finish (before any reload creates the next day's workout). Once the app has moved on to the next day, fixing a wrongly-finished workout is a manual DB fix, same pattern as the id-2/id-3 repair above.
 
-**Where we stopped:** Vinos is 2 real sessions into the PRD §6 gate (Lower squat-focus, Push). Nothing currently broken or blocking.
+**2026-07-19 — gate cleared, entering M3/M4:** Vinos completed all 4 rotation days (Lower squat-focus, Push, Lower hinge-focus, Pull) across 4 real sessions. Reviewed session notes directly from Neon: confirmed weight-carry-forward and tap-to-edit both working correctly against real data. Fixed one more small bug — fixed-duration/distance exercises (side plank, farmer's carry) displayed as a confusing "30-30" range instead of a single value.
 
-**What's next:** one more real gym session to close the 2-3 session gate, then M3/M4 (program editor, progress analytics, nutrition/body-metrics entry) can start per PRD §6. Two flagged-but-undecided feature ideas waiting on Vinos: per-arm/unilateral set logging, and the "AI bot that can edit workouts" idea from his session notes (bigger scope, not sized yet).
+**Chosen next phase:** Progress + body tracking (M4 core) over program editor or nutrition entry — Vinos wants the analytics that PRD §1 calls the headline goal, and there's now 4 sessions of real data to build against. Also requested, folded into this phase: a real color system (current UI is grayscale-only, described as "sad") and better exercise illustrations (current hand-drawn stick figures don't convey meaningful info). Building in this order: color system → illustrations → body metrics entry → progress trends → progression suggestion engine.
+
+**Deferred, explicitly not now:** an onboarding flow for new users with two paths (guided plan builder vs. pick-and-design-your-own days). Vinos flagged this as a "later" idea — don't build until asked.
 
 ## Don't
-- Don't build the program editor, analytics/progress screens, or nutrition entry yet — gated on 2-3 real gym sessions with the M2 logging loop first (PRD §6).
+- Don't build the onboarding flow — explicitly deferred, see Current Sprint.
 - Don't add RLS or a user table — single-tenant by design, see PRD §4.

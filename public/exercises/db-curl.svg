@@ -1,9 +1,9 @@
 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-<polyline points="100,62,100,85" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-<circle cx="100" cy="48" r="13" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-<polyline points="100,85,100,130" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-<polyline points="100,130,100,185" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-<polyline points="100,85,100,110" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-<polyline points="100,110,95,80" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-<g><polyline points="85,78,105,78" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="83" cy="78" r="7" fill="currentColor"/><circle cx="107" cy="78" r="7" fill="currentColor"/></g>
+<polyline points="100,62,100,85" stroke="#71717a" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<circle cx="100" cy="48" r="13" stroke="#71717a" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<polyline points="100,85,100,130" stroke="#71717a" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<polyline points="100,130,100,185" stroke="#71717a" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<polyline points="100,85,100,110" stroke="#71717a" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<polyline points="100,110,95,80" stroke="#71717a" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<g><polyline points="85,78,105,78" stroke="#d97706" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="83" cy="78" r="8" fill="#d97706"/><circle cx="107" cy="78" r="8" fill="#d97706"/></g>
 </svg>

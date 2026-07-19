@@ -3,11 +3,25 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  /* Warm, energetic accent for primary actions and highlights. */
+  --accent: #b45309;
+  --accent-foreground: #ffffff;
+  --accent-soft: #fef3c7;
+  /* Progress/positive signal — trend-up, progression suggestions, completed states. */
+  --success: #059669;
+  --success-foreground: #ffffff;
+  --success-soft: #d1fae5;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-soft: var(--accent-soft);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-soft: var(--success-soft);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -16,6 +30,12 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --accent: #f59e0b;
+    --accent-foreground: #09090b;
+    --accent-soft: #451a03;
+    --success: #10b981;
+    --success-foreground: #09090b;
+    --success-soft: #022c22;
   }
 }
 

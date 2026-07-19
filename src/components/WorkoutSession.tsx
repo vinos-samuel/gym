@@ -131,7 +131,7 @@ export function WorkoutSession({
   if (finished) {
     return (
       <div className="flex min-h-dvh flex-col items-center justify-center gap-3 bg-white px-6 text-center dark:bg-zinc-950">
-        <p className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">Nice work.</p>
+        <p className="text-2xl font-semibold text-success">Nice work.</p>
         <p className="text-zinc-500">
           {totalLogged} of {totalTarget} sets logged. See you next session.
         </p>
@@ -152,12 +152,16 @@ export function WorkoutSession({
       <header className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">{dayName}</h1>
-          <p className="text-sm text-zinc-500">
+          <p
+            className={`text-sm font-medium ${
+              totalTarget > 0 && totalLogged >= totalTarget ? "text-success" : "text-zinc-500"
+            }`}
+          >
             {totalLogged}/{totalTarget} sets
           </p>
         </div>
         {pendingCount > 0 && (
-          <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
+          <span className="rounded-full bg-accent-soft px-3 py-1 text-xs font-medium text-accent">
             Syncing {pendingCount}
           </span>
         )}
@@ -202,7 +206,7 @@ export function WorkoutSession({
           type="button"
           onClick={handleFinish}
           disabled={finishing}
-          className="w-full rounded-xl bg-zinc-900 py-4 text-base font-medium text-zinc-50 active:bg-zinc-700 disabled:opacity-50 dark:bg-zinc-50 dark:text-zinc-950 dark:active:bg-zinc-300"
+          className="w-full rounded-xl bg-accent py-4 text-base font-medium text-accent-foreground active:opacity-80 disabled:opacity-50"
         >
           {finishing ? "Finishing…" : "Finish workout"}
         </button>

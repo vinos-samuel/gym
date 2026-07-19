@@ -67,9 +67,9 @@ export function ExerciseCard({
             <img
               src={exercise.illustration_path}
               alt=""
-              width={56}
-              height={56}
-              className="rounded-lg bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-50"
+              width={64}
+              height={64}
+              className="rounded-lg bg-zinc-100 dark:bg-zinc-800"
             />
           </button>
         )}
@@ -135,7 +135,7 @@ export function ExerciseCard({
                       onEditSet(setNumber, editWeight, editReps);
                       setEditingSetNumber(null);
                     }}
-                    className="flex-1 rounded-xl bg-zinc-900 py-3 text-base font-medium text-zinc-50 active:bg-zinc-700 dark:bg-zinc-50 dark:text-zinc-950 dark:active:bg-zinc-300"
+                    className="flex-1 rounded-xl bg-accent py-3 text-base font-medium text-accent-foreground active:opacity-80"
                   >
                     Save
                   </button>
@@ -153,7 +153,7 @@ export function ExerciseCard({
               >
                 <span>Set {setNumber}</span>
                 <span className="font-medium text-zinc-700 dark:text-zinc-300">
-                  ✓ {logged.weightKg}kg × {logged.reps}
+                  <span className="text-success">✓</span> {logged.weightKg}kg × {logged.reps}
                 </span>
               </button>
             );
@@ -171,7 +171,7 @@ export function ExerciseCard({
           return (
             <div
               key={setNumber}
-              className="flex flex-col items-center gap-3 rounded-xl border border-zinc-200 p-3 dark:border-zinc-700"
+              className="flex flex-col items-center gap-3 rounded-xl border-2 border-accent/40 bg-accent-soft/30 p-3"
             >
               <span className="text-sm font-medium text-zinc-500">Set {setNumber}</span>
               <div className="flex items-center gap-6">
@@ -186,16 +186,14 @@ export function ExerciseCard({
               <button
                 type="button"
                 onClick={() => onLogSet(setNumber, weight, reps)}
-                className="w-full rounded-xl bg-zinc-900 py-3 text-base font-medium text-zinc-50 active:bg-zinc-700 dark:bg-zinc-50 dark:text-zinc-950 dark:active:bg-zinc-300"
+                className="w-full rounded-xl bg-accent py-3 text-base font-medium text-accent-foreground active:opacity-80"
               >
                 Log set
               </button>
             </div>
           );
         })}
-        {isDone && (
-          <p className="text-center text-sm text-zinc-400 dark:text-zinc-600">All sets done</p>
-        )}
+        {isDone && <p className="text-center text-sm font-medium text-success">All sets done</p>}
       </div>
     </div>
   );
