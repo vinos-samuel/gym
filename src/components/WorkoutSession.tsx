@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { ExerciseCard } from "./ExerciseCard";
 import { RestTimer } from "./RestTimer";
@@ -160,11 +161,16 @@ export function WorkoutSession({
             {totalLogged}/{totalTarget} sets
           </p>
         </div>
-        {pendingCount > 0 && (
-          <span className="rounded-full bg-accent-soft px-3 py-1 text-xs font-medium text-accent">
-            Syncing {pendingCount}
-          </span>
-        )}
+        <div className="flex items-center gap-2">
+          {pendingCount > 0 && (
+            <span className="rounded-full bg-accent-soft px-3 py-1 text-xs font-medium text-accent">
+              Syncing {pendingCount}
+            </span>
+          )}
+          <Link href="/progress" className="text-sm font-medium text-accent">
+            Progress
+          </Link>
+        </div>
       </header>
 
       {showRest && <RestTimer key={restKey} durationSeconds={REST_SECONDS} onDismiss={() => setShowRest(false)} />}
