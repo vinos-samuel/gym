@@ -167,7 +167,10 @@ export function WorkoutSession({
               Syncing {pendingCount}
             </span>
           )}
-          <Link href="/progress" className="text-sm font-medium text-accent">
+          <Link
+            href="/progress"
+            className="rounded-lg bg-accent-soft px-3 py-2 text-sm font-medium text-accent active:opacity-70"
+          >
             Progress
           </Link>
         </div>

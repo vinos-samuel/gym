@@ -52,7 +52,10 @@ export default async function ProgressPage() {
     <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 bg-zinc-50 px-4 pb-10 pt-6 dark:bg-zinc-950">
       <header className="flex items-center justify-between">
         <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">Progress</h1>
-        <Link href="/" className="text-sm font-medium text-accent">
+        <Link
+          href="/"
+          className="rounded-lg bg-accent-soft px-3 py-2 text-sm font-medium text-accent active:opacity-70"
+        >
           ← Today
         </Link>
       </header>
