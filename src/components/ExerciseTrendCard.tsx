@@ -4,11 +4,13 @@ import type { ProgressionSuggestion } from "@/lib/progression";
 export function ExerciseTrendCard({
   name,
   series,
+  volumeSeries,
   latestTopSet,
   suggestion,
 }: {
   name: string;
   series: { date: string; value: number }[];
+  volumeSeries: { date: string; value: number }[];
   latestTopSet: { weightKg: number; reps: number } | null;
   suggestion: ProgressionSuggestion;
 }) {
@@ -36,6 +38,11 @@ export function ExerciseTrendCard({
       )}
 
       <TrendChart data={series} unit="kg" />
+
+      <p className="mb-2 mt-4 text-xs text-zinc-400 dark:text-zinc-600">
+        Volume per session (weight × reps × sets) — total work, not peak strength
+      </p>
+      <TrendChart data={volumeSeries} unit="kg" />
     </div>
   );
 }

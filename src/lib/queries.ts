@@ -236,6 +236,26 @@ export async function getExerciseSessionHistory(
     .reverse();
 }
 
+/** Total volume (sum of weight × reps across every set) per completed session —
+ * the direct signal for work-quantity trend, distinct from est. 1RM's
+ * peak-strength-quality signal. */
+export async function getExerciseVolumeHistory(
+  exerciseId: number,
+  limit = 12
+): Promise<{ date: string; volume: number }[]> {
+  const { rows } = await db.query<{ date: string; volume: string }>(
+    `SELECT w.completed_at::date AS date, SUM(s.weight_kg * s.reps) AS volume
+     FROM sets s
+     JOIN workouts w ON w.id = s.workout_id
+     WHERE s.exercise_id = $1 AND w.completed_at IS NOT NULL
+     GROUP BY w.id, w.completed_at
+     ORDER BY w.completed_at DESC
+     LIMIT $2`,
+    [exerciseId, limit]
+  );
+  return rows.map((r) => ({ date: r.date, volume: Number(r.volume) })).reverse();
+}
+
 export type SessionSets = { workoutId: number; date: string; sets: { weightKg: number; reps: number }[] };
 
 /** Full set-by-set data for the last N completed sessions of an exercise —

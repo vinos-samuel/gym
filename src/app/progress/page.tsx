@@ -4,6 +4,7 @@ import {
   getBodyMetricSeries,
   getExercisesWithHistory,
   getExerciseSessionHistory,
+  getExerciseVolumeHistory,
   getExerciseRecentSessionSets,
   getCurrentTargetsForExercise,
 } from "@/lib/queries";
@@ -27,8 +28,9 @@ export default async function ProgressPage() {
 
   const exerciseCards = await Promise.all(
     exercises.map(async (exercise) => {
-      const [sessionHistory, recentSessionSets, targets] = await Promise.all([
+      const [sessionHistory, volumeHistory, recentSessionSets, targets] = await Promise.all([
         getExerciseSessionHistory(exercise.id),
+        getExerciseVolumeHistory(exercise.id),
         getExerciseRecentSessionSets(exercise.id, 4),
         getCurrentTargetsForExercise(exercise.id),
       ]);
@@ -38,13 +40,15 @@ export default async function ProgressPage() {
         value: estimate1RM(s.weightKg, s.reps),
       }));
 
+      const volumeSeries = volumeHistory.map((v) => ({ date: v.date, value: v.volume }));
+
       const latestTopSet = sessionHistory[sessionHistory.length - 1] ?? null;
 
       const suggestion = targets
         ? computeProgressionSuggestion(recentSessionSets, targets)
         : ({ type: "insufficient_data" } as const);
 
-      return { id: exercise.id, name: exercise.name, series, latestTopSet, suggestion };
+      return { id: exercise.id, name: exercise.name, series, volumeSeries, latestTopSet, suggestion };
     })
   );
 
@@ -79,6 +83,7 @@ export default async function ProgressPage() {
               key={card.id}
               name={card.name}
               series={card.series}
+              volumeSeries={card.volumeSeries}
               latestTopSet={card.latestTopSet}
               suggestion={card.suggestion}
             />
