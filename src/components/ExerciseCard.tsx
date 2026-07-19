@@ -76,7 +76,10 @@ export function ExerciseCard({
         <div className="min-w-0 flex-1">
           <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">{exercise.name}</h3>
           <p className="text-sm text-zinc-500">
-            {exercise.target_sets} × {exercise.target_rep_low}–{exercise.target_rep_high}{" "}
+            {exercise.target_sets} ×{" "}
+            {exercise.target_rep_low === exercise.target_rep_high
+              ? exercise.target_rep_low
+              : `${exercise.target_rep_low}–${exercise.target_rep_high}`}{" "}
             {trackingLabel[exercise.tracking_type].toLowerCase()}
             {exercise.notes ? ` · ${exercise.notes}` : ""}
           </p>
