@@ -1,4 +1,4 @@
-const CACHE_NAME = "gym-shell-v1";
+const CACHE_NAME = "gym-shell-v2";
 
 self.addEventListener("install", () => {
   self.skipWaiting();
@@ -26,8 +26,10 @@ self.addEventListener("fetch", (event) => {
         (cached) =>
           cached ||
           fetch(request).then((response) => {
-            const copy = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+            if (response.ok) {
+              const copy = response.clone();
+              caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+            }
             return response;
           })
       )
@@ -36,11 +38,16 @@ self.addEventListener("fetch", (event) => {
   }
 
   // Everything else (pages, manifest, icons): network-first, cache fallback for flaky signal.
+  // Only cache successful responses — fetch() resolves (doesn't reject) on HTTP error
+  // statuses too, so caching unconditionally can trap a transient 500 and keep serving
+  // it as the "offline fallback" long after the server has recovered.
   event.respondWith(
     fetch(request)
       .then((response) => {
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+        if (response.ok) {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+        }
         return response;
       })
       .catch(() => caches.match(request))
