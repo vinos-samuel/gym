@@ -169,8 +169,16 @@ export function WorkoutSession({
           )}
           <Link
             href="/progress"
-            className="rounded-lg bg-accent-soft px-3 py-2 text-sm font-medium text-accent active:opacity-70"
+            className="flex items-center gap-1.5 rounded-lg bg-accent-soft px-3 py-2 text-sm font-medium text-accent active:opacity-70"
           >
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path
+                d="M4 15V9M10 15V5M16 15V11"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
             Progress
           </Link>
         </div>

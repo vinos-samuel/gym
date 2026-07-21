@@ -215,83 +215,7 @@ export async function getBodyMetricSeries(
 // ---- Progress / trends ----
 
 export type SessionTopSet = { workoutId: number; date: string; weightKg: number; reps: number };
-
-/** One row per completed session: the heaviest set logged that session (tie-broken
- * by reps). Used for the trend chart — one point per session, not one per set. */
-export async function getExerciseSessionHistory(
-  exerciseId: number,
-  limit = 12
-): Promise<SessionTopSet[]> {
-  const { rows } = await db.query<{ workout_id: number; date: string; weight_kg: string; reps: number }>(
-    `SELECT DISTINCT ON (w.id) w.id AS workout_id, w.completed_at::date AS date, s.weight_kg, s.reps
-     FROM sets s
-     JOIN workouts w ON w.id = s.workout_id
-     WHERE s.exercise_id = $1 AND w.completed_at IS NOT NULL
-     ORDER BY w.id, s.weight_kg DESC, s.reps DESC, w.completed_at DESC
-     LIMIT $2`,
-    [exerciseId, limit]
-  );
-  return rows
-    .map((r) => ({ workoutId: r.workout_id, date: r.date, weightKg: Number(r.weight_kg), reps: r.reps }))
-    .reverse();
-}
-
-/** Total volume (sum of weight × reps across every set) per completed session —
- * the direct signal for work-quantity trend, distinct from est. 1RM's
- * peak-strength-quality signal. */
-export async function getExerciseVolumeHistory(
-  exerciseId: number,
-  limit = 12
-): Promise<{ date: string; volume: number }[]> {
-  const { rows } = await db.query<{ date: string; volume: string }>(
-    `SELECT w.completed_at::date AS date, SUM(s.weight_kg * s.reps) AS volume
-     FROM sets s
-     JOIN workouts w ON w.id = s.workout_id
-     WHERE s.exercise_id = $1 AND w.completed_at IS NOT NULL
-     GROUP BY w.id, w.completed_at
-     ORDER BY w.completed_at DESC
-     LIMIT $2`,
-    [exerciseId, limit]
-  );
-  return rows.map((r) => ({ date: r.date, volume: Number(r.volume) })).reverse();
-}
-
 export type SessionSets = { workoutId: number; date: string; sets: { weightKg: number; reps: number }[] };
-
-/** Full set-by-set data for the last N completed sessions of an exercise —
- * needed to evaluate the double-progression rule, which depends on every set
- * in a session, not just the top one. */
-export async function getExerciseRecentSessionSets(
-  exerciseId: number,
-  sessionLimit = 4
-): Promise<SessionSets[]> {
-  const { rows } = await db.query<{ workout_id: number; date: string; weight_kg: string; reps: number }>(
-    `SELECT s.workout_id, w.completed_at::date AS date, s.weight_kg, s.reps
-     FROM sets s
-     JOIN workouts w ON w.id = s.workout_id
-     WHERE s.exercise_id = $1
-       AND w.completed_at IS NOT NULL
-       AND w.id IN (
-         SELECT s2.workout_id
-         FROM sets s2 JOIN workouts w2 ON w2.id = s2.workout_id
-         WHERE s2.exercise_id = $1 AND w2.completed_at IS NOT NULL
-         GROUP BY s2.workout_id, w2.completed_at
-         ORDER BY w2.completed_at DESC
-         LIMIT $2
-       )
-     ORDER BY w.completed_at DESC, s.set_number ASC`,
-    [exerciseId, sessionLimit]
-  );
-
-  const byWorkout = new Map<number, SessionSets>();
-  for (const r of rows) {
-    if (!byWorkout.has(r.workout_id)) {
-      byWorkout.set(r.workout_id, { workoutId: r.workout_id, date: r.date, sets: [] });
-    }
-    byWorkout.get(r.workout_id)!.sets.push({ weightKg: Number(r.weight_kg), reps: r.reps });
-  }
-  return [...byWorkout.values()].sort((a, b) => (a.date < b.date ? -1 : 1));
-}
 
 export async function getExercisesWithHistory(): Promise<{ id: number; name: string }[]> {
   const { rows } = await db.query<{ id: number; name: string }>(
@@ -303,19 +227,143 @@ export async function getExercisesWithHistory(): Promise<{ id: number; name: str
   return rows;
 }
 
-export async function getCurrentTargetsForExercise(
-  exerciseId: number
-): Promise<{ targetRepHigh: number; targetSets: number; incrementKg: number } | null> {
-  const { rows } = await db.query<{ target_rep_high: number; target_sets: number; increment: string }>(
-    `SELECT de.target_rep_high, de.target_sets, de.progression_increment_kg AS increment
-     FROM day_exercises de WHERE de.exercise_id = $1
-     ORDER BY de.id LIMIT 1`,
-    [exerciseId]
+export type ExerciseTargets = { targetRepHigh: number; targetSets: number; incrementKg: number };
+
+/** All four "per exercise" progress queries below are batched across every
+ * exercise in one query each, rather than one query per exercise. The
+ * Progress page has ~20 exercises; querying each individually meant 60-80
+ * concurrent round trips fighting over a 10-connection pool — this is what
+ * made the page feel broken/unresponsive. */
+
+export async function getAllExerciseSessionHistories(
+  limit = 12
+): Promise<Map<number, SessionTopSet[]>> {
+  const { rows } = await db.query<{
+    exercise_id: number;
+    workout_id: number;
+    date: string;
+    weight_kg: string;
+    reps: number;
+  }>(
+    `WITH top_sets AS (
+       SELECT s.exercise_id, w.id AS workout_id, w.completed_at::date AS date, s.weight_kg, s.reps,
+              ROW_NUMBER() OVER (
+                PARTITION BY s.exercise_id, w.id ORDER BY s.weight_kg DESC, s.reps DESC
+              ) AS rn
+       FROM sets s JOIN workouts w ON w.id = s.workout_id
+       WHERE w.completed_at IS NOT NULL
+     ),
+     ranked AS (
+       SELECT exercise_id, workout_id, date, weight_kg, reps,
+              ROW_NUMBER() OVER (PARTITION BY exercise_id ORDER BY date DESC) AS session_rank
+       FROM top_sets WHERE rn = 1
+     )
+     SELECT exercise_id, workout_id, date, weight_kg, reps
+     FROM ranked WHERE session_rank <= $1
+     ORDER BY exercise_id, date ASC`,
+    [limit]
   );
-  if (!rows[0]) return null;
-  return {
-    targetRepHigh: rows[0].target_rep_high,
-    targetSets: rows[0].target_sets,
-    incrementKg: Number(rows[0].increment),
-  };
+
+  const result = new Map<number, SessionTopSet[]>();
+  for (const r of rows) {
+    if (!result.has(r.exercise_id)) result.set(r.exercise_id, []);
+    result.get(r.exercise_id)!.push({
+      workoutId: r.workout_id,
+      date: r.date,
+      weightKg: Number(r.weight_kg),
+      reps: r.reps,
+    });
+  }
+  return result;
+}
+
+export async function getAllExerciseVolumeHistories(
+  limit = 12
+): Promise<Map<number, { date: string; volume: number }[]>> {
+  const { rows } = await db.query<{ exercise_id: number; date: string; volume: string }>(
+    `WITH vol AS (
+       SELECT s.exercise_id, w.id AS workout_id, w.completed_at::date AS date,
+              SUM(s.weight_kg * s.reps) AS volume
+       FROM sets s JOIN workouts w ON w.id = s.workout_id
+       WHERE w.completed_at IS NOT NULL
+       GROUP BY s.exercise_id, w.id, w.completed_at
+     ),
+     ranked AS (
+       SELECT *, ROW_NUMBER() OVER (PARTITION BY exercise_id ORDER BY date DESC) AS session_rank
+       FROM vol
+     )
+     SELECT exercise_id, date, volume FROM ranked WHERE session_rank <= $1
+     ORDER BY exercise_id, date ASC`,
+    [limit]
+  );
+
+  const result = new Map<number, { date: string; volume: number }[]>();
+  for (const r of rows) {
+    if (!result.has(r.exercise_id)) result.set(r.exercise_id, []);
+    result.get(r.exercise_id)!.push({ date: r.date, volume: Number(r.volume) });
+  }
+  return result;
+}
+
+export async function getAllExerciseRecentSessionSets(
+  sessionLimit = 4
+): Promise<Map<number, SessionSets[]>> {
+  const { rows } = await db.query<{
+    exercise_id: number;
+    workout_id: number;
+    date: string;
+    weight_kg: string;
+    reps: number;
+  }>(
+    `WITH session_rank AS (
+       SELECT DISTINCT s.exercise_id, w.id AS workout_id, w.completed_at::date AS date,
+              DENSE_RANK() OVER (PARTITION BY s.exercise_id ORDER BY w.completed_at DESC) AS rnk
+       FROM sets s JOIN workouts w ON w.id = s.workout_id
+       WHERE w.completed_at IS NOT NULL
+     )
+     SELECT s.exercise_id, sr.workout_id, sr.date, s.weight_kg, s.reps
+     FROM sets s
+     JOIN session_rank sr ON sr.workout_id = s.workout_id AND sr.exercise_id = s.exercise_id
+     WHERE sr.rnk <= $1
+     ORDER BY s.exercise_id, sr.date ASC, s.set_number ASC`,
+    [sessionLimit]
+  );
+
+  const result = new Map<number, Map<number, SessionSets>>();
+  for (const r of rows) {
+    if (!result.has(r.exercise_id)) result.set(r.exercise_id, new Map());
+    const byWorkout = result.get(r.exercise_id)!;
+    if (!byWorkout.has(r.workout_id)) {
+      byWorkout.set(r.workout_id, { workoutId: r.workout_id, date: r.date, sets: [] });
+    }
+    byWorkout.get(r.workout_id)!.sets.push({ weightKg: Number(r.weight_kg), reps: r.reps });
+  }
+
+  const flattened = new Map<number, SessionSets[]>();
+  for (const [exerciseId, byWorkout] of result) {
+    flattened.set(exerciseId, [...byWorkout.values()]);
+  }
+  return flattened;
+}
+
+export async function getAllCurrentTargets(): Promise<Map<number, ExerciseTargets>> {
+  const { rows } = await db.query<{
+    exercise_id: number;
+    target_rep_high: number;
+    target_sets: number;
+    increment: string;
+  }>(
+    `SELECT DISTINCT ON (exercise_id) exercise_id, target_rep_high, target_sets,
+            progression_increment_kg AS increment
+     FROM day_exercises ORDER BY exercise_id, id`
+  );
+  const result = new Map<number, ExerciseTargets>();
+  for (const r of rows) {
+    result.set(r.exercise_id, {
+      targetRepHigh: r.target_rep_high,
+      targetSets: r.target_sets,
+      incrementKg: Number(r.increment),
+    });
+  }
+  return result;
 }

@@ -3,10 +3,10 @@ import {
   getLatestBodyMetrics,
   getBodyMetricSeries,
   getExercisesWithHistory,
-  getExerciseSessionHistory,
-  getExerciseVolumeHistory,
-  getExerciseRecentSessionSets,
-  getCurrentTargetsForExercise,
+  getAllExerciseSessionHistories,
+  getAllExerciseVolumeHistories,
+  getAllExerciseRecentSessionSets,
+  getAllCurrentTargets,
 } from "@/lib/queries";
 import { computeProgressionSuggestion } from "@/lib/progression";
 import { BodyMetricsEntry } from "@/components/BodyMetricsEntry";
@@ -19,38 +19,36 @@ function estimate1RM(weightKg: number, reps: number): number {
 }
 
 export default async function ProgressPage() {
-  const [latest, bodyweightSeries, waistSeries, exercises] = await Promise.all([
-    getLatestBodyMetrics(),
-    getBodyMetricSeries("bodyweight_kg"),
-    getBodyMetricSeries("waist_cm"),
-    getExercisesWithHistory(),
-  ]);
+  // Every "per exercise" query below is batched across all exercises in one
+  // round trip each — looping per exercise here previously meant 60-80
+  // concurrent queries fighting over a 10-connection pool.
+  const [latest, bodyweightSeries, waistSeries, exercises, sessionHistories, volumeHistories, recentSessionSets, targets] =
+    await Promise.all([
+      getLatestBodyMetrics(),
+      getBodyMetricSeries("bodyweight_kg"),
+      getBodyMetricSeries("waist_cm"),
+      getExercisesWithHistory(),
+      getAllExerciseSessionHistories(),
+      getAllExerciseVolumeHistories(),
+      getAllExerciseRecentSessionSets(4),
+      getAllCurrentTargets(),
+    ]);
 
-  const exerciseCards = await Promise.all(
-    exercises.map(async (exercise) => {
-      const [sessionHistory, volumeHistory, recentSessionSets, targets] = await Promise.all([
-        getExerciseSessionHistory(exercise.id),
-        getExerciseVolumeHistory(exercise.id),
-        getExerciseRecentSessionSets(exercise.id, 4),
-        getCurrentTargetsForExercise(exercise.id),
-      ]);
+  const exerciseCards = exercises.map((exercise) => {
+    const sessionHistory = sessionHistories.get(exercise.id) ?? [];
+    const volumeHistory = volumeHistories.get(exercise.id) ?? [];
+    const exerciseTargets = targets.get(exercise.id);
 
-      const series = sessionHistory.map((s) => ({
-        date: s.date,
-        value: estimate1RM(s.weightKg, s.reps),
-      }));
+    const series = sessionHistory.map((s) => ({ date: s.date, value: estimate1RM(s.weightKg, s.reps) }));
+    const volumeSeries = volumeHistory.map((v) => ({ date: v.date, value: v.volume }));
+    const latestTopSet = sessionHistory[sessionHistory.length - 1] ?? null;
 
-      const volumeSeries = volumeHistory.map((v) => ({ date: v.date, value: v.volume }));
+    const suggestion = exerciseTargets
+      ? computeProgressionSuggestion(recentSessionSets.get(exercise.id) ?? [], exerciseTargets)
+      : ({ type: "insufficient_data" } as const);
 
-      const latestTopSet = sessionHistory[sessionHistory.length - 1] ?? null;
-
-      const suggestion = targets
-        ? computeProgressionSuggestion(recentSessionSets, targets)
-        : ({ type: "insufficient_data" } as const);
-
-      return { id: exercise.id, name: exercise.name, series, volumeSeries, latestTopSet, suggestion };
-    })
-  );
+    return { id: exercise.id, name: exercise.name, series, volumeSeries, latestTopSet, suggestion };
+  });
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 bg-zinc-50 px-4 pb-10 pt-6 dark:bg-zinc-950">
