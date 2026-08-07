@@ -5,24 +5,37 @@ import { useEffect, useMemo, useState } from "react";
 import { ExerciseCard } from "./ExerciseCard";
 import { RestTimer } from "./RestTimer";
 import { initOfflineQueueSync, logSetWithQueue, subscribePendingCount } from "@/lib/offlineQueue";
-import type { DayExercise, SetRow } from "@/lib/queries";
+import type { DayExercise, ExerciseLibraryItem, SetRow } from "@/lib/queries";
 
 const REST_SECONDS = 90;
 
 type LoggedSet = { setNumber: number; weightKg: number; reps: number };
-type ExerciseWithHistory = DayExercise & { lastSets: SetRow[]; loggedSets: SetRow[] };
+type ExerciseWithHistory = DayExercise & {
+  lastSets: SetRow[];
+  loggedSets: SetRow[];
+  originalExerciseId: number;
+  isSubstituted: boolean;
+};
 
 export function WorkoutSession({
   workoutId,
   dayName,
+  warmupText,
+  cooldownText,
   exercises,
+  allExercises,
   initialNotes,
 }: {
   workoutId: number;
   dayName: string;
+  warmupText: string | null;
+  cooldownText: string | null;
   exercises: ExerciseWithHistory[];
+  allExercises: ExerciseLibraryItem[];
   initialNotes: string;
 }) {
+  const [warmupOpen, setWarmupOpen] = useState(false);
+  const [swapping, setSwapping] = useState(false);
   const [notes, setNotes] = useState(initialNotes);
   const [notesOpen, setNotesOpen] = useState(initialNotes.length > 0);
   const [loggedByExercise, setLoggedByExercise] = useState<Record<number, LoggedSet[]>>(() => {
@@ -84,6 +97,26 @@ export function WorkoutSession({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ workoutId, exerciseId: exercise.exercise_id, setNumber, weightKg, reps }),
     });
+  }
+
+  async function handleSwap(dayExerciseId: number, substituteExerciseId: number) {
+    setSwapping(true);
+    await fetch("/api/workouts/substitute", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ workoutId, dayExerciseId, substituteExerciseId }),
+    });
+    window.location.reload();
+  }
+
+  async function handleRevertSwap(dayExerciseId: number) {
+    setSwapping(true);
+    await fetch("/api/workouts/substitute", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ workoutId, dayExerciseId }),
+    });
+    window.location.reload();
   }
 
   async function handleFinish() {
@@ -186,18 +219,55 @@ export function WorkoutSession({
 
       {showRest && <RestTimer key={restKey} durationSeconds={REST_SECONDS} onDismiss={() => setShowRest(false)} />}
 
+      {warmupText && (
+        <div className="rounded-xl border border-zinc-200 dark:border-zinc-800">
+          <button
+            type="button"
+            onClick={() => setWarmupOpen((o) => !o)}
+            className="flex w-full items-center justify-between px-3 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300"
+          >
+            Warm-up
+            <span className="text-zinc-400">{warmupOpen ? "−" : "+"}</span>
+          </button>
+          {warmupOpen && (
+            <p className="border-t border-zinc-200 px-3 py-2 text-sm text-zinc-600 dark:border-zinc-800 dark:text-zinc-400">
+              {warmupText}
+            </p>
+          )}
+        </div>
+      )}
+
       <div className="flex flex-col gap-3">
         {exercises.map((exercise) => (
           <ExerciseCard
-            key={exercise.exercise_id}
+            key={exercise.day_exercise_id}
             exercise={exercise}
+            isSubstituted={exercise.isSubstituted}
+            allExercises={allExercises}
             lastSets={exercise.lastSets}
             loggedSets={loggedByExercise[exercise.exercise_id] ?? []}
             onLogSet={(setNumber, weightKg, reps) => handleLogSet(exercise, setNumber, weightKg, reps)}
             onEditSet={(setNumber, weightKg, reps) => handleEditSet(exercise, setNumber, weightKg, reps)}
+            onSwap={(substituteId) => handleSwap(exercise.day_exercise_id, substituteId)}
+            onRevertSwap={() => handleRevertSwap(exercise.day_exercise_id)}
           />
         ))}
       </div>
+
+      {swapping && (
+        <div className="fixed inset-0 z-10 flex items-center justify-center bg-black/20">
+          <div className="rounded-xl bg-white px-4 py-3 text-sm font-medium text-zinc-900 dark:bg-zinc-900 dark:text-zinc-50">
+            Swapping…
+          </div>
+        </div>
+      )}
+
+      {cooldownText && (
+        <div className="rounded-xl bg-zinc-100 px-3 py-2 text-sm text-zinc-600 dark:bg-zinc-900 dark:text-zinc-400">
+          <span className="font-medium text-zinc-700 dark:text-zinc-300">Cool-down: </span>
+          {cooldownText}
+        </div>
+      )}
 
       {notesOpen ? (
         <textarea

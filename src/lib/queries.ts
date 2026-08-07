@@ -20,6 +20,53 @@ export type DayExercise = {
   video_url: string | null;
 };
 
+export type ExerciseLibraryItem = {
+  id: number;
+  name: string;
+  muscle_group: string;
+  equipment: string;
+  tracking_type: TrackingType;
+  illustration_path: string | null;
+  form_cue: string | null;
+  video_url: string | null;
+};
+
+export async function getAllExercises(): Promise<ExerciseLibraryItem[]> {
+  const { rows } = await db.query<ExerciseLibraryItem>(
+    `SELECT id, name, muscle_group, equipment, tracking_type, illustration_path, form_cue, video_url
+     FROM exercises ORDER BY name`
+  );
+  return rows;
+}
+
+export async function getWorkoutSubstitutions(workoutId: number): Promise<Map<number, number>> {
+  const { rows } = await db.query<{ day_exercise_id: number; substitute_exercise_id: number }>(
+    `SELECT day_exercise_id, substitute_exercise_id FROM workout_substitutions WHERE workout_id = $1`,
+    [workoutId]
+  );
+  return new Map(rows.map((r) => [r.day_exercise_id, r.substitute_exercise_id]));
+}
+
+export async function setWorkoutSubstitution(
+  workoutId: number,
+  dayExerciseId: number,
+  substituteExerciseId: number
+): Promise<void> {
+  await db.query(
+    `INSERT INTO workout_substitutions (workout_id, day_exercise_id, substitute_exercise_id)
+     VALUES ($1, $2, $3)
+     ON CONFLICT (workout_id, day_exercise_id) DO UPDATE SET substitute_exercise_id = EXCLUDED.substitute_exercise_id`,
+    [workoutId, dayExerciseId, substituteExerciseId]
+  );
+}
+
+export async function removeWorkoutSubstitution(workoutId: number, dayExerciseId: number): Promise<void> {
+  await db.query(`DELETE FROM workout_substitutions WHERE workout_id = $1 AND day_exercise_id = $2`, [
+    workoutId,
+    dayExerciseId,
+  ]);
+}
+
 export type SetRow = {
   id: number;
   exercise_id: number;
@@ -78,11 +125,19 @@ export async function getNextProgramDayId(): Promise<number> {
   return next.rows[0].id;
 }
 
+export type ProgramDay = {
+  id: number;
+  name: string;
+  day_order: number;
+  warmup_text: string | null;
+  cooldown_text: string | null;
+};
+
 export async function getProgramDayWithExercises(
   programDayId: number
-): Promise<{ day: { id: number; name: string; day_order: number }; exercises: DayExercise[] }> {
-  const day = await db.query<{ id: number; name: string; day_order: number }>(
-    `SELECT id, name, day_order FROM program_days WHERE id = $1`,
+): Promise<{ day: ProgramDay; exercises: DayExercise[] }> {
+  const day = await db.query<ProgramDay>(
+    `SELECT id, name, day_order, warmup_text, cooldown_text FROM program_days WHERE id = $1`,
     [programDayId]
   );
   const exercises = await db.query<DayExercise>(

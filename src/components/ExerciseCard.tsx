@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { NumberStepper } from "./NumberStepper";
-import type { DayExercise, SetRow } from "@/lib/queries";
+import type { DayExercise, ExerciseLibraryItem, SetRow } from "@/lib/queries";
 
 type LoggedSet = { setNumber: number; weightKg: number; reps: number };
 
@@ -20,17 +20,26 @@ const trackingStep: Record<DayExercise["tracking_type"], number> = {
 
 export function ExerciseCard({
   exercise,
+  isSubstituted,
+  allExercises,
   lastSets,
   loggedSets,
   onLogSet,
   onEditSet,
+  onSwap,
+  onRevertSwap,
 }: {
   exercise: DayExercise;
+  isSubstituted: boolean;
+  allExercises: ExerciseLibraryItem[];
   lastSets: SetRow[];
   loggedSets: LoggedSet[];
   onLogSet: (setNumber: number, weightKg: number, reps: number) => void;
   onEditSet: (setNumber: number, weightKg: number, reps: number) => void;
+  onSwap: (substituteExerciseId: number) => void;
+  onRevertSwap: () => void;
 }) {
+  const [swapping, setSwapping] = useState(false);
   const nextSetNumber = loggedSets.length + 1;
   const isDone = nextSetNumber > exercise.target_sets;
 
@@ -74,7 +83,14 @@ export function ExerciseCard({
           </button>
         )}
         <div className="min-w-0 flex-1">
-          <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">{exercise.name}</h3>
+          <div className="flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">{exercise.name}</h3>
+            {isSubstituted && (
+              <span className="rounded-full bg-accent-soft px-2 py-0.5 text-xs font-medium text-accent">
+                swapped
+              </span>
+            )}
+          </div>
           <p className="text-sm text-zinc-500">
             {exercise.target_sets} ×{" "}
             {exercise.target_rep_low === exercise.target_rep_high
@@ -83,8 +99,53 @@ export function ExerciseCard({
             {trackingLabel[exercise.tracking_type].toLowerCase()}
             {exercise.notes ? ` · ${exercise.notes}` : ""}
           </p>
+          <div className="mt-1 flex gap-3">
+            <button
+              type="button"
+              onClick={() => setSwapping((s) => !s)}
+              className="text-xs font-medium text-zinc-400 underline dark:text-zinc-600"
+            >
+              Swap exercise
+            </button>
+            {isSubstituted && (
+              <button
+                type="button"
+                onClick={onRevertSwap}
+                className="text-xs font-medium text-zinc-400 underline dark:text-zinc-600"
+              >
+                Revert
+              </button>
+            )}
+          </div>
         </div>
       </div>
+
+      {swapping && (
+        <select
+          defaultValue=""
+          onChange={(e) => {
+            const id = Number(e.target.value);
+            if (id) {
+              if (loggedSets.length === 0 || window.confirm("Switch exercise? This resets today's sets for this slot.")) {
+                onSwap(id);
+              }
+            }
+            setSwapping(false);
+          }}
+          className="mt-2 w-full rounded-lg border border-zinc-300 bg-zinc-50 px-3 py-2 text-sm text-zinc-900 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
+        >
+          <option value="" disabled>
+            Choose a replacement…
+          </option>
+          {allExercises
+            .filter((e) => e.name !== exercise.name)
+            .map((e) => (
+              <option key={e.id} value={e.id}>
+                {e.name}
+              </option>
+            ))}
+        </select>
+      )}
 
       {expanded && (
         <div className="mt-3 rounded-lg bg-zinc-50 p-3 text-sm text-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-300">
