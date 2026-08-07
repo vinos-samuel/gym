@@ -1,5 +1,16 @@
 import { db } from "./db";
 
+// node-postgres parses Postgres `date` columns into JS Date objects by
+// default, despite every type in this file declaring `date: string` — that
+// mismatch only surfaces once a Date object gets rendered directly as a
+// React child (crashes with "Objects are not valid as a React child"), which
+// JSON.stringify-based debugging never reveals since it silently stringifies
+// Dates. Every date-typed query result is normalized through this so the
+// `string` types are actually true at runtime, not just on paper.
+function toDateString(value: unknown): string {
+  return value instanceof Date ? value.toISOString().slice(0, 10) : (value as string);
+}
+
 export type TrackingType = "reps" | "seconds" | "meters";
 
 export type DayExercise = {
@@ -264,7 +275,7 @@ export async function getBodyMetricSeries(
      WHERE metric_type = $1 ORDER BY metric_date DESC LIMIT $2`,
     [type, limit]
   );
-  return rows.map((r) => ({ date: r.date, value: Number(r.value) })).reverse();
+  return rows.map((r) => ({ date: toDateString(r.date), value: Number(r.value) })).reverse();
 }
 
 // ---- Progress / trends ----
@@ -324,7 +335,7 @@ export async function getAllExerciseSessionHistories(
     if (!result.has(r.exercise_id)) result.set(r.exercise_id, []);
     result.get(r.exercise_id)!.push({
       workoutId: r.workout_id,
-      date: r.date,
+      date: toDateString(r.date),
       weightKg: Number(r.weight_kg),
       reps: r.reps,
     });
@@ -355,7 +366,7 @@ export async function getAllExerciseVolumeHistories(
   const result = new Map<number, { date: string; volume: number }[]>();
   for (const r of rows) {
     if (!result.has(r.exercise_id)) result.set(r.exercise_id, []);
-    result.get(r.exercise_id)!.push({ date: r.date, volume: Number(r.volume) });
+    result.get(r.exercise_id)!.push({ date: toDateString(r.date), volume: Number(r.volume) });
   }
   return result;
 }
@@ -389,7 +400,7 @@ export async function getAllExerciseRecentSessionSets(
     if (!result.has(r.exercise_id)) result.set(r.exercise_id, new Map());
     const byWorkout = result.get(r.exercise_id)!;
     if (!byWorkout.has(r.workout_id)) {
-      byWorkout.set(r.workout_id, { workoutId: r.workout_id, date: r.date, sets: [] });
+      byWorkout.set(r.workout_id, { workoutId: r.workout_id, date: toDateString(r.date), sets: [] });
     }
     byWorkout.get(r.workout_id)!.sets.push({ weightKg: Number(r.weight_kg), reps: r.reps });
   }
