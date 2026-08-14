@@ -14,13 +14,13 @@ export function TrendChart({ data, unit }: { data: Point[]; unit: string }) {
   const [active, setActive] = useState<number | null>(null);
 
   if (data.length === 0) {
-    return <p className="text-sm text-zinc-400 dark:text-zinc-600">No data yet.</p>;
+    return <p className="text-sm text-stone-400 dark:text-stone-600">No data yet.</p>;
   }
   if (data.length === 1) {
     return (
-      <p className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
+      <p className="text-2xl font-semibold text-stone-900 dark:text-stone-50">
         {data[0].value}
-        <span className="ml-1 text-sm font-normal text-zinc-500">{unit}</span>
+        <span className="ml-1 text-sm font-normal text-stone-500">{unit}</span>
       </p>
     );
   }
@@ -55,7 +55,7 @@ export function TrendChart({ data, unit }: { data: Point[]; unit: string }) {
           x2={WIDTH - PAD_X}
           y2={PAD_TOP + plotH}
           stroke="currentColor"
-          className="text-zinc-200 dark:text-zinc-800"
+          className="text-stone-200 dark:text-stone-800"
           strokeWidth={1}
         />
         <path d={pathD} fill="none" stroke="var(--accent)" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
@@ -74,7 +74,7 @@ export function TrendChart({ data, unit }: { data: Point[]; unit: string }) {
           {last.value}
           {unit}
         </text>
-        <text x={PAD_X} y={HEIGHT - 6} fontSize="10" fill="currentColor" className="text-zinc-400 dark:text-zinc-600">
+        <text x={PAD_X} y={HEIGHT - 6} fontSize="10" fill="currentColor" className="text-stone-400 dark:text-stone-600">
           {formatDate(data[0].date)}
         </text>
         <text
@@ -83,13 +83,13 @@ export function TrendChart({ data, unit }: { data: Point[]; unit: string }) {
           textAnchor="end"
           fontSize="10"
           fill="currentColor"
-          className="text-zinc-400 dark:text-zinc-600"
+          className="text-stone-400 dark:text-stone-600"
         >
           {formatDate(data[data.length - 1].date)}
         </text>
       </svg>
       {shown && (
-        <div className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 rounded-lg bg-zinc-900 px-2 py-1 text-xs text-zinc-50 dark:bg-zinc-50 dark:text-zinc-950">
+        <div className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 rounded-lg bg-stone-900 px-2 py-1 text-xs text-stone-50 dark:bg-stone-50 dark:text-stone-950">
           {formatDate(shown.date)}: {shown.value}
           {unit}
         </div>

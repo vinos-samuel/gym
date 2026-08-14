@@ -23,16 +23,16 @@ export function ExerciseTrendCard({
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className="rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="rounded-2xl border border-stone-200 bg-white p-4 dark:border-stone-800 dark:bg-stone-900">
       <button type="button" onClick={() => setExpanded((e) => !e)} className="flex w-full items-center justify-between">
-        <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">{name}</h3>
+        <h3 className="text-sm font-semibold text-stone-900 dark:text-stone-50">{name}</h3>
         <div className="flex items-center gap-2">
           {latestTopSet && (
-            <span className="text-xs text-zinc-500">
+            <span className="text-xs text-stone-500">
               last: {latestTopSet.weightKg}kg × {latestTopSet.reps}
             </span>
           )}
-          <span className="text-zinc-400">{expanded ? "−" : "+"}</span>
+          <span className="text-stone-400">{expanded ? "−" : "+"}</span>
         </div>
       </button>
 
@@ -42,17 +42,18 @@ export function ExerciseTrendCard({
         </p>
       )}
       {suggestion.type === "stalled" && (
-        <p className="mt-1 text-xs font-medium text-accent">
-          Stalled — no improvement in 4 sessions. Consider a deload, a variation swap, or hold steady.
+        <p className="mt-1 text-xs font-medium text-gold-foreground">
+          <span className="rounded-full bg-gold-soft px-2 py-0.5 text-gold-foreground">Stalled</span>{" "}
+          — no improvement in 4 sessions. Consider a deload, a variation swap, or hold steady.
         </p>
       )}
 
       {expanded && (
         <div className="mt-3">
-          <p className="mb-2 text-xs text-zinc-400 dark:text-zinc-600">Estimated 1-rep max, per session</p>
+          <p className="mb-2 text-xs text-stone-400 dark:text-stone-600">Estimated 1-rep max, per session</p>
           <TrendChart data={series} unit="kg" />
 
-          <p className="mb-2 mt-4 text-xs text-zinc-400 dark:text-zinc-600">
+          <p className="mb-2 mt-4 text-xs text-stone-400 dark:text-stone-600">
             Volume per session (weight × reps × sets) — total work, not peak strength
           </p>
           <TrendChart data={volumeSeries} unit="kg" />

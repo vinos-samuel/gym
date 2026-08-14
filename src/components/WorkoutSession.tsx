@@ -164,16 +164,16 @@ export function WorkoutSession({
 
   if (finished) {
     return (
-      <div className="flex min-h-dvh flex-col items-center justify-center gap-3 bg-white px-6 text-center dark:bg-zinc-950">
+      <div className="flex min-h-dvh flex-col items-center justify-center gap-3 bg-background px-6 text-center">
         <p className="text-2xl font-semibold text-success">Nice work.</p>
-        <p className="text-zinc-500">
+        <p className="text-stone-500">
           {totalLogged} of {totalTarget} sets logged. See you next session.
         </p>
         <button
           type="button"
           onClick={handleUndoFinish}
           disabled={finishing}
-          className="mt-4 text-sm text-zinc-400 underline disabled:opacity-50 dark:text-zinc-600"
+          className="mt-4 text-sm text-stone-400 underline disabled:opacity-50 dark:text-stone-600"
         >
           {finishing ? "Reopening…" : "Not done — keep logging"}
         </button>
@@ -182,13 +182,13 @@ export function WorkoutSession({
   }
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 bg-zinc-50 px-4 pb-28 pt-6 dark:bg-zinc-950">
+    <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 bg-background px-4 pb-28 pt-6">
       <header className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">{dayName}</h1>
+          <h1 className="text-xl font-semibold text-stone-900 dark:text-stone-50">{dayName}</h1>
           <p
             className={`text-sm font-medium ${
-              totalTarget > 0 && totalLogged >= totalTarget ? "text-success" : "text-zinc-500"
+              totalTarget > 0 && totalLogged >= totalTarget ? "text-success" : "text-stone-500"
             }`}
           >
             {totalLogged}/{totalTarget} sets
@@ -202,7 +202,7 @@ export function WorkoutSession({
           )}
           <Link
             href="/program"
-            className="flex items-center justify-center rounded-lg bg-accent-soft p-2 text-accent active:opacity-70"
+            className="flex items-center justify-center rounded-lg bg-accent p-2 text-accent-foreground active:opacity-80"
             aria-label="Program"
           >
             <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
@@ -216,7 +216,7 @@ export function WorkoutSession({
           </Link>
           <Link
             href="/progress"
-            className="flex items-center gap-1.5 rounded-lg bg-accent-soft px-3 py-2 text-sm font-medium text-accent active:opacity-70"
+            className="flex items-center gap-1.5 rounded-lg bg-accent px-3 py-2 text-sm font-medium text-accent-foreground active:opacity-80"
           >
             <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
               <path
@@ -234,17 +234,17 @@ export function WorkoutSession({
       {showRest && <RestTimer key={restKey} durationSeconds={REST_SECONDS} onDismiss={() => setShowRest(false)} />}
 
       {warmupText && (
-        <div className="rounded-xl border border-zinc-200 dark:border-zinc-800">
+        <div className="rounded-xl border border-stone-200 dark:border-stone-800">
           <button
             type="button"
             onClick={() => setWarmupOpen((o) => !o)}
-            className="flex w-full items-center justify-between px-3 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300"
+            className="flex w-full items-center justify-between px-3 py-2 text-sm font-medium text-stone-700 dark:text-stone-300"
           >
             Warm-up
-            <span className="text-zinc-400">{warmupOpen ? "−" : "+"}</span>
+            <span className="text-stone-400">{warmupOpen ? "−" : "+"}</span>
           </button>
           {warmupOpen && (
-            <p className="border-t border-zinc-200 px-3 py-2 text-sm text-zinc-600 dark:border-zinc-800 dark:text-zinc-400">
+            <p className="border-t border-stone-200 px-3 py-2 text-sm text-stone-600 dark:border-stone-800 dark:text-stone-400">
               {warmupText}
             </p>
           )}
@@ -270,15 +270,15 @@ export function WorkoutSession({
 
       {swapping && (
         <div className="fixed inset-0 z-10 flex items-center justify-center bg-black/20">
-          <div className="rounded-xl bg-white px-4 py-3 text-sm font-medium text-zinc-900 dark:bg-zinc-900 dark:text-zinc-50">
+          <div className="rounded-xl bg-white px-4 py-3 text-sm font-medium text-stone-900 dark:bg-stone-900 dark:text-stone-50">
             Swapping…
           </div>
         </div>
       )}
 
       {cooldownText && (
-        <div className="rounded-xl bg-zinc-100 px-3 py-2 text-sm text-zinc-600 dark:bg-zinc-900 dark:text-zinc-400">
-          <span className="font-medium text-zinc-700 dark:text-zinc-300">Cool-down: </span>
+        <div className="rounded-xl bg-stone-100 px-3 py-2 text-sm text-stone-600 dark:bg-stone-900 dark:text-stone-400">
+          <span className="font-medium text-stone-700 dark:text-stone-300">Cool-down: </span>
           {cooldownText}
         </div>
       )}
@@ -290,19 +290,19 @@ export function WorkoutSession({
           onBlur={handleSaveNotes}
           placeholder="How did today go?"
           rows={2}
-          className="rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50 dark:placeholder:text-zinc-600"
+          className="rounded-xl border border-stone-200 bg-white px-3 py-2 text-sm text-stone-900 placeholder:text-stone-400 focus:border-stone-500 focus:outline-none dark:border-stone-800 dark:bg-stone-900 dark:text-stone-50 dark:placeholder:text-stone-600"
         />
       ) : (
         <button
           type="button"
           onClick={() => setNotesOpen(true)}
-          className="self-start text-sm text-zinc-400 underline dark:text-zinc-600"
+          className="self-start text-sm text-stone-400 underline dark:text-stone-600"
         >
           + Add note
         </button>
       )}
 
-      <div className="fixed inset-x-0 bottom-0 mx-auto max-w-md border-t border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950">
+      <div className="fixed inset-x-0 bottom-0 mx-auto max-w-md border-t border-stone-200 bg-white p-4 dark:border-stone-800 dark:bg-stone-950">
         <button
           type="button"
           onClick={handleFinish}

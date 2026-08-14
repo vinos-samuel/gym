@@ -1,16 +1,24 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  /* Warm, energetic accent for primary actions and highlights. */
-  --accent: #b45309;
+  --background: #f6f4ee;
+  --foreground: #4a4840;
+  /* Primary action color — every button and interactive nav element. */
+  --accent: #5e9b79;
   --accent-foreground: #ffffff;
-  --accent-soft: #fef3c7;
-  /* Progress/positive signal — trend-up, progression suggestions, completed states. */
-  --success: #059669;
+  --accent-soft: #e1ebe3;
+  /* Positive/progress signal — currently the same sage as accent (matches the
+     approved design direction, which uses one accent color throughout rather
+     than a separate success hue). Kept as its own token so it can diverge
+     later without touching every call site. */
+  --success: #5e9b79;
   --success-foreground: #ffffff;
-  --success-soft: #d1fae5;
+  --success-soft: #e1ebe3;
+  /* Rare secondary accent — used sparingly (e.g. "stalled" badge), never for
+     primary actions. */
+  --gold: #c99a2e;
+  --gold-foreground: #3a2c07;
+  --gold-soft: #f3e6c4;
 }
 
 @theme inline {
@@ -22,25 +30,31 @@
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
   --color-success-soft: var(--success-soft);
-  --font-sans: var(--font-geist-sans);
+  --color-gold: var(--gold);
+  --color-gold-foreground: var(--gold-foreground);
+  --color-gold-soft: var(--gold-soft);
+  --font-sans: var(--font-nunito);
   --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --accent: #f59e0b;
-    --accent-foreground: #09090b;
-    --accent-soft: #451a03;
-    --success: #10b981;
-    --success-foreground: #09090b;
-    --success-soft: #022c22;
+    --background: #201e19;
+    --foreground: #f0ede4;
+    --accent: #7fbb94;
+    --accent-foreground: #12241a;
+    --accent-soft: #263129;
+    --success: #7fbb94;
+    --success-foreground: #12241a;
+    --success-soft: #263129;
+    --gold: #e0bc5c;
+    --gold-foreground: #2b2005;
+    --gold-soft: #3a3120;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-nunito), -apple-system, "Segoe UI", sans-serif;
 }

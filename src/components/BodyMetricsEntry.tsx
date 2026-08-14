@@ -59,8 +59,8 @@ function MetricCard({
   }
 
   return (
-    <div className="rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
-      <h3 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-50">{label}</h3>
+    <div className="rounded-2xl border border-stone-200 bg-white p-4 dark:border-stone-800 dark:bg-stone-900">
+      <h3 className="mb-3 text-sm font-semibold text-stone-900 dark:text-stone-50">{label}</h3>
       <TrendChart data={series} unit={unit} />
       <div className="mt-3 flex gap-2">
         <input
@@ -70,7 +70,7 @@ function MetricCard({
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder={`${label} in ${unit}`}
-          className="w-full rounded-xl border border-zinc-300 bg-zinc-50 px-3 py-3 text-base text-zinc-900 focus:border-accent focus:outline-none dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
+          className="w-full rounded-xl border border-stone-300 bg-stone-50 px-3 py-3 text-base text-stone-900 focus:border-accent focus:outline-none dark:border-stone-800 dark:bg-stone-900 dark:text-stone-50"
         />
         <button
           type="button"

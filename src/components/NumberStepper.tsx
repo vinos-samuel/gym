@@ -18,24 +18,24 @@ export function NumberStepper({
 
   return (
     <div className="flex flex-col items-center gap-1">
-      <span className="text-xs uppercase tracking-wide text-zinc-500">{label}</span>
+      <span className="text-xs uppercase tracking-wide text-stone-500">{label}</span>
       <div className="flex items-center gap-2">
         <button
           type="button"
           onClick={dec}
           aria-label={`Decrease ${label}`}
-          className="flex h-14 w-14 items-center justify-center rounded-full bg-zinc-100 text-2xl font-medium text-zinc-900 active:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-50 dark:active:bg-zinc-700"
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-stone-100 text-2xl font-medium text-stone-900 active:bg-stone-200 dark:bg-stone-800 dark:text-stone-50 dark:active:bg-stone-700"
         >
           −
         </button>
-        <span className="w-16 text-center text-2xl font-semibold tabular-nums text-zinc-900 dark:text-zinc-50">
+        <span className="w-16 text-center text-2xl font-semibold tabular-nums text-stone-900 dark:text-stone-50">
           {value}
         </span>
         <button
           type="button"
           onClick={inc}
           aria-label={`Increase ${label}`}
-          className="flex h-14 w-14 items-center justify-center rounded-full bg-zinc-100 text-2xl font-medium text-zinc-900 active:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-50 dark:active:bg-zinc-700"
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-stone-100 text-2xl font-medium text-stone-900 active:bg-stone-200 dark:bg-stone-800 dark:text-stone-50 dark:active:bg-stone-700"
         >
           +
         </button>

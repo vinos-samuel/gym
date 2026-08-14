@@ -51,12 +51,12 @@ export default async function ProgressPage() {
   });
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 bg-zinc-50 px-4 pb-10 pt-6 dark:bg-zinc-950">
+    <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col gap-4 bg-background px-4 pb-10 pt-6">
       <header className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">Progress</h1>
+        <h1 className="text-xl font-semibold text-stone-900 dark:text-stone-50">Progress</h1>
         <Link
           href="/"
-          className="rounded-lg bg-accent-soft px-3 py-2 text-sm font-medium text-accent active:opacity-70"
+          className="rounded-lg bg-accent px-3 py-2 text-sm font-medium text-accent-foreground active:opacity-80"
         >
           ← Today
         </Link>
@@ -70,12 +70,12 @@ export default async function ProgressPage() {
       />
 
       {exerciseCards.length === 0 ? (
-        <p className="text-sm text-zinc-400 dark:text-zinc-600">
+        <p className="text-sm text-stone-400 dark:text-stone-600">
           Log a few more sessions and exercise trends will show up here.
         </p>
       ) : (
         <div className="flex flex-col gap-3">
-          <h2 className="text-sm font-semibold text-zinc-500">Exercises</h2>
+          <h2 className="text-sm font-semibold text-stone-500">Exercises</h2>
           {exerciseCards.map((card) => (
             <ExerciseTrendCard
               key={card.id}

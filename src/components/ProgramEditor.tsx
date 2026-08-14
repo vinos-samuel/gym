@@ -59,20 +59,20 @@ function DaySection({
   const existingIds = new Set(exercises.map((e) => e.exercise_id));
 
   return (
-    <div className="rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="rounded-2xl border border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-900">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
         className="flex w-full items-center justify-between p-4"
       >
-        <span className="font-semibold text-zinc-900 dark:text-zinc-50">{day.name}</span>
-        <span className="text-sm text-zinc-400">
+        <span className="font-semibold text-stone-900 dark:text-stone-50">{day.name}</span>
+        <span className="text-sm text-stone-400">
           {exercises.length} exercises {open ? "−" : "+"}
         </span>
       </button>
 
       {open && (
-        <div className="flex flex-col gap-2 border-t border-zinc-200 p-3 dark:border-zinc-800">
+        <div className="flex flex-col gap-2 border-t border-stone-200 p-3 dark:border-stone-800">
           {exercises.map((exercise, i) => (
             <ExerciseRow
               key={exercise.day_exercise_id}
@@ -94,7 +94,7 @@ function DaySection({
                 const id = Number(e.target.value);
                 if (id) void handleAdd(id);
               }}
-              className="mt-2 w-full rounded-lg border border-zinc-300 bg-zinc-50 px-3 py-2 text-sm text-zinc-900 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
+              className="mt-2 w-full rounded-lg border border-stone-300 bg-stone-50 px-3 py-2 text-sm text-stone-900 dark:border-stone-800 dark:bg-stone-900 dark:text-stone-50"
             >
               <option value="" disabled>
                 Choose an exercise…
@@ -178,43 +178,43 @@ function ExerciseRow({
   if (editing) {
     return (
       <div className="rounded-xl border border-accent/40 bg-accent-soft/30 p-3">
-        <p className="mb-2 text-sm font-semibold text-zinc-900 dark:text-zinc-50">{exercise.name}</p>
+        <p className="mb-2 text-sm font-semibold text-stone-900 dark:text-stone-50">{exercise.name}</p>
         <div className="grid grid-cols-2 gap-2 text-sm">
-          <label className="flex flex-col gap-1 text-zinc-600 dark:text-zinc-400">
+          <label className="flex flex-col gap-1 text-stone-600 dark:text-stone-400">
             Sets
             <input
               type="number"
               value={sets}
               onChange={(e) => setSets(Number(e.target.value))}
-              className="rounded-lg border border-zinc-300 bg-white px-2 py-1.5 dark:border-zinc-700 dark:bg-zinc-900"
+              className="rounded-lg border border-stone-300 bg-white px-2 py-1.5 dark:border-stone-700 dark:bg-stone-900"
             />
           </label>
-          <label className="flex flex-col gap-1 text-zinc-600 dark:text-zinc-400">
+          <label className="flex flex-col gap-1 text-stone-600 dark:text-stone-400">
             Increment (kg)
             <input
               type="number"
               step="0.5"
               value={increment}
               onChange={(e) => setIncrement(Number(e.target.value))}
-              className="rounded-lg border border-zinc-300 bg-white px-2 py-1.5 dark:border-zinc-700 dark:bg-zinc-900"
+              className="rounded-lg border border-stone-300 bg-white px-2 py-1.5 dark:border-stone-700 dark:bg-stone-900"
             />
           </label>
-          <label className="flex flex-col gap-1 text-zinc-600 dark:text-zinc-400">
+          <label className="flex flex-col gap-1 text-stone-600 dark:text-stone-400">
             Rep low
             <input
               type="number"
               value={repLow}
               onChange={(e) => setRepLow(Number(e.target.value))}
-              className="rounded-lg border border-zinc-300 bg-white px-2 py-1.5 dark:border-zinc-700 dark:bg-zinc-900"
+              className="rounded-lg border border-stone-300 bg-white px-2 py-1.5 dark:border-stone-700 dark:bg-stone-900"
             />
           </label>
-          <label className="flex flex-col gap-1 text-zinc-600 dark:text-zinc-400">
+          <label className="flex flex-col gap-1 text-stone-600 dark:text-stone-400">
             Rep high
             <input
               type="number"
               value={repHigh}
               onChange={(e) => setRepHigh(Number(e.target.value))}
-              className="rounded-lg border border-zinc-300 bg-white px-2 py-1.5 dark:border-zinc-700 dark:bg-zinc-900"
+              className="rounded-lg border border-stone-300 bg-white px-2 py-1.5 dark:border-stone-700 dark:bg-stone-900"
             />
           </label>
         </div>
@@ -222,7 +222,7 @@ function ExerciseRow({
           <button
             type="button"
             onClick={() => setEditing(false)}
-            className="flex-1 rounded-lg bg-zinc-100 py-2 text-sm font-medium text-zinc-900 dark:bg-zinc-800 dark:text-zinc-50"
+            className="flex-1 rounded-lg bg-stone-100 py-2 text-sm font-medium text-stone-900 dark:bg-stone-800 dark:text-stone-50"
           >
             Cancel
           </button>
@@ -240,10 +240,10 @@ function ExerciseRow({
   }
 
   return (
-    <div className="flex items-center justify-between gap-2 rounded-lg bg-zinc-50 px-3 py-2 dark:bg-zinc-800/50">
+    <div className="flex items-center justify-between gap-2 rounded-lg bg-stone-50 px-3 py-2 dark:bg-stone-800/50">
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-50">{exercise.name}</p>
-        <p className="text-xs text-zinc-500">
+        <p className="truncate text-sm font-medium text-stone-900 dark:text-stone-50">{exercise.name}</p>
+        <p className="text-xs text-stone-500">
           {exercise.target_sets} × {exercise.target_rep_low}–{exercise.target_rep_high} · +
           {exercise.progression_increment_kg}kg
         </p>
@@ -254,7 +254,7 @@ function ExerciseRow({
           disabled={busy || isFirst}
           onClick={() => handleReorder("up")}
           aria-label="Move up"
-          className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-100 text-zinc-600 disabled:opacity-30 dark:bg-zinc-800 dark:text-zinc-400"
+          className="flex h-8 w-8 items-center justify-center rounded-lg bg-stone-100 text-stone-600 disabled:opacity-30 dark:bg-stone-800 dark:text-stone-400"
         >
           ↑
         </button>
@@ -263,14 +263,14 @@ function ExerciseRow({
           disabled={busy || isLast}
           onClick={() => handleReorder("down")}
           aria-label="Move down"
-          className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-100 text-zinc-600 disabled:opacity-30 dark:bg-zinc-800 dark:text-zinc-400"
+          className="flex h-8 w-8 items-center justify-center rounded-lg bg-stone-100 text-stone-600 disabled:opacity-30 dark:bg-stone-800 dark:text-stone-400"
         >
           ↓
         </button>
         <button
           type="button"
           onClick={() => setEditing(true)}
-          className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400"
+          className="flex h-8 w-8 items-center justify-center rounded-lg bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-400"
           aria-label="Edit"
         >
           ✎
@@ -278,7 +278,7 @@ function ExerciseRow({
         <button
           type="button"
           onClick={handleRemove}
-          className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-100 text-red-500 dark:bg-zinc-800"
+          className="flex h-8 w-8 items-center justify-center rounded-lg bg-stone-100 text-red-500 dark:bg-stone-800"
           aria-label="Remove"
         >
           ✕

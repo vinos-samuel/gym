@@ -1,8 +1,8 @@
 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-<polyline points="72,65,75,85" stroke="#71717a" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-<circle cx="72" cy="52" r="13" stroke="#71717a" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-<polyline points="75,85,80,130" stroke="#71717a" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-<polyline points="80,130,80,165" stroke="#71717a" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-<polyline points="75,85,135,88" stroke="#71717a" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-<rect x="130" y="82" width="40" height="12" rx="3" fill="#d97706"/>
+<polyline points="72,65,75,85" stroke="#78716c" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<circle cx="72" cy="52" r="13" stroke="#78716c" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<polyline points="75,85,80,130" stroke="#78716c" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<polyline points="80,130,80,165" stroke="#78716c" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<polyline points="75,85,135,88" stroke="#78716c" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<rect x="130" y="82" width="40" height="12" rx="3" fill="#5e9b79"/>
 </svg>

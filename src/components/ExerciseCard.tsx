@@ -68,7 +68,7 @@ export function ExerciseCard({
   }
 
   return (
-    <div className="rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="rounded-2xl border border-stone-200 bg-white p-4 dark:border-stone-800 dark:bg-stone-900">
       <div className="flex items-start gap-3">
         {exercise.illustration_path && (
           <button type="button" onClick={() => setExpanded((e) => !e)} className="shrink-0">
@@ -78,20 +78,20 @@ export function ExerciseCard({
               alt=""
               width={64}
               height={64}
-              className="rounded-lg bg-zinc-100 dark:bg-zinc-800"
+              className="rounded-lg bg-stone-100 dark:bg-stone-800"
             />
           </button>
         )}
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">{exercise.name}</h3>
+            <h3 className="text-lg font-semibold text-stone-900 dark:text-stone-50">{exercise.name}</h3>
             {isSubstituted && (
               <span className="rounded-full bg-accent-soft px-2 py-0.5 text-xs font-medium text-accent">
                 swapped
               </span>
             )}
           </div>
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-stone-500">
             {exercise.target_sets} ×{" "}
             {exercise.target_rep_low === exercise.target_rep_high
               ? exercise.target_rep_low
@@ -103,7 +103,7 @@ export function ExerciseCard({
             <button
               type="button"
               onClick={() => setSwapping((s) => !s)}
-              className="text-xs font-medium text-zinc-400 underline dark:text-zinc-600"
+              className="text-xs font-medium text-stone-400 underline dark:text-stone-600"
             >
               Swap exercise
             </button>
@@ -111,7 +111,7 @@ export function ExerciseCard({
               <button
                 type="button"
                 onClick={onRevertSwap}
-                className="text-xs font-medium text-zinc-400 underline dark:text-zinc-600"
+                className="text-xs font-medium text-stone-400 underline dark:text-stone-600"
               >
                 Revert
               </button>
@@ -132,7 +132,7 @@ export function ExerciseCard({
             }
             setSwapping(false);
           }}
-          className="mt-2 w-full rounded-lg border border-zinc-300 bg-zinc-50 px-3 py-2 text-sm text-zinc-900 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50"
+          className="mt-2 w-full rounded-lg border border-stone-300 bg-stone-50 px-3 py-2 text-sm text-stone-900 dark:border-stone-800 dark:bg-stone-900 dark:text-stone-50"
         >
           <option value="" disabled>
             Choose a replacement…
@@ -148,7 +148,7 @@ export function ExerciseCard({
       )}
 
       {expanded && (
-        <div className="mt-3 rounded-lg bg-zinc-50 p-3 text-sm text-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-300">
+        <div className="mt-3 rounded-lg bg-stone-50 p-3 text-sm text-stone-700 dark:bg-stone-800/50 dark:text-stone-300">
           {exercise.form_cue}
           {exercise.video_url && (
             <a
@@ -170,9 +170,9 @@ export function ExerciseCard({
             return (
               <div
                 key={setNumber}
-                className="flex flex-col items-center gap-3 rounded-xl border border-zinc-200 p-3 dark:border-zinc-700"
+                className="flex flex-col items-center gap-3 rounded-xl border border-stone-200 p-3 dark:border-stone-700"
               >
-                <span className="text-sm font-medium text-zinc-500">Editing set {setNumber}</span>
+                <span className="text-sm font-medium text-stone-500">Editing set {setNumber}</span>
                 <div className="flex items-center gap-6">
                   <NumberStepper value={editWeight} onChange={setEditWeight} step={2.5} label="kg" />
                   <NumberStepper
@@ -186,7 +186,7 @@ export function ExerciseCard({
                   <button
                     type="button"
                     onClick={() => setEditingSetNumber(null)}
-                    className="flex-1 rounded-xl bg-zinc-100 py-3 text-base font-medium text-zinc-900 active:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-50 dark:active:bg-zinc-700"
+                    className="flex-1 rounded-xl bg-stone-100 py-3 text-base font-medium text-stone-900 active:bg-stone-200 dark:bg-stone-800 dark:text-stone-50 dark:active:bg-stone-700"
                   >
                     Cancel
                   </button>
@@ -210,10 +210,10 @@ export function ExerciseCard({
                 key={setNumber}
                 type="button"
                 onClick={() => startEditing(setNumber, logged)}
-                className="flex items-center justify-between rounded-lg bg-zinc-50 px-3 py-2 text-sm text-zinc-500 active:bg-zinc-100 dark:bg-zinc-800/50 dark:active:bg-zinc-800"
+                className="flex items-center justify-between rounded-lg bg-stone-50 px-3 py-2 text-sm text-stone-500 active:bg-stone-100 dark:bg-stone-800/50 dark:active:bg-stone-800"
               >
                 <span>Set {setNumber}</span>
-                <span className="font-medium text-zinc-700 dark:text-zinc-300">
+                <span className="font-medium text-stone-700 dark:text-stone-300">
                   <span className="text-success">✓</span> {logged.weightKg}kg × {logged.reps}
                 </span>
               </button>
@@ -223,7 +223,7 @@ export function ExerciseCard({
             return (
               <div
                 key={setNumber}
-                className="rounded-lg px-3 py-2 text-sm text-zinc-400 dark:text-zinc-600"
+                className="rounded-lg px-3 py-2 text-sm text-stone-400 dark:text-stone-600"
               >
                 Set {setNumber}
               </div>
@@ -234,7 +234,7 @@ export function ExerciseCard({
               key={setNumber}
               className="flex flex-col items-center gap-3 rounded-xl border-2 border-accent/40 bg-accent-soft/30 p-3"
             >
-              <span className="text-sm font-medium text-zinc-500">Set {setNumber}</span>
+              <span className="text-sm font-medium text-stone-500">Set {setNumber}</span>
               <div className="flex items-center gap-6">
                 <NumberStepper value={weight} onChange={setWeight} step={2.5} label="kg" />
                 <NumberStepper
