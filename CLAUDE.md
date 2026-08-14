@@ -49,15 +49,24 @@ Personal single-user fitness tracking PWA for Vinos. Source of truth for scope, 
 - `TrendChart` is a small hand-built single-series SVG line component, not a charting library — bodyweight and waist get separate charts rather than one dual-axis chart (different units; dual-axis is a known anti-pattern).
 - Progression logic lives in `src/lib/progression.ts` as a pure function operating on already-fetched session data, kept separate from `queries.ts` (DB access) for testability.
 
-**Where we stopped:** M4 core (progress + body tracking) is live. Program editor (M3) and nutrition entry are still unbuilt — Vinos chose progress/body-tracking first.
+**2026-08-07 — M3 shipped (Program editor) + 0kg guard:**
+- New `/program` screen, linked from Today: edit target sets/rep range/progression increment per exercise, add/remove exercises from a day (removal keeps logged history — sets reference `exercise_id` directly, not the day_exercise slot), reorder within a day.
+- Reordering swaps `order_in_day` through a temporary sentinel value rather than a direct two-row swap — `(program_day_id, order_in_day)` is a non-deferrable unique constraint, so a direct swap collides mid-update.
+- Migration: `workout_substitutions.day_exercise_id` FK changed to `ON DELETE CASCADE`, since removing a day_exercise would otherwise be blocked by old substitution rows referencing that slot.
+- Also shipped: a confirm-before-logging guard when weight is 0kg on a non-bodyweight exercise (the Incline DB press incident from weeks ago).
+- All mutations (add/remove/update/reorder) verified against real production data with self-restoring tests before shipping.
+
+**Big strategic thread, not a build decision yet:** Vinos wants to eventually merge GYM's exercise-tracking into **Vigor** (his App Store app — VibecodeApp stack, already tracks nutrition/calories-burned/water/weight) rather than keep GYM as a permanently separate tool. This is explicitly "much bigger" and needs its own planning conversation — it means porting logic to a different framework/design system, not copying files. Worth checking in on before investing in more GYM-only polish that might get thrown away in a port. Not blocking current work; Vinos chose to keep building GYM standalone (program editor) despite this.
+
+**Where we stopped:** M2, M3, and M4-core are all live and working. Nutrition entry (rest of M4) is the only PRD-scoped piece still unbuilt.
 
 **Open, not yet decided:**
-- Per-arm/unilateral set tracking (flagged after a reported left-shoulder weakness on lateral raises — app currently can't log left/right separately).
-- Guard against accidentally logging a 0kg set on a brand-new exercise (happened once, Incline DB press).
+- Per-arm/unilateral set tracking (flagged twice now — left-shoulder weakness on lateral raises, and that exercise's trend has been flat for 3+ sessions since. App still can't log left/right separately).
 - The "AI bot that can edit workouts" idea from an earlier session note — bigger scope, not sized.
+- The Vigor merge (see above) — needs its own scoping conversation.
 
 **Deferred, explicitly not now:** an onboarding flow for new users with two paths (guided plan builder vs. pick-and-design-your-own days). Vinos flagged this as a "later" idea — don't build until asked.
 
 ## Don't
-- Don't build the onboarding flow, program editor, or nutrition entry yet — not chosen as next priority, see Current Sprint.
+- Don't build the onboarding flow or nutrition entry yet — not chosen as next priority, see Current Sprint.
 - Don't add RLS or a user table — single-tenant by design, see PRD §4.
