@@ -201,6 +201,20 @@ export function WorkoutSession({
             </span>
           )}
           <Link
+            href="/program"
+            className="flex items-center justify-center rounded-lg bg-accent-soft p-2 text-accent active:opacity-70"
+            aria-label="Program"
+          >
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path
+                d="M4 5h12M4 10h12M4 15h8"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
+          </Link>
+          <Link
             href="/progress"
             className="flex items-center gap-1.5 rounded-lg bg-accent-soft px-3 py-2 text-sm font-medium text-accent active:opacity-70"
           >

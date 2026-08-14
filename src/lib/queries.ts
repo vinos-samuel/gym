@@ -165,6 +165,95 @@ export async function getProgramDayWithExercises(
   return { day: day.rows[0], exercises: exercises.rows };
 }
 
+// ---- Program editor ----
+
+export async function getFullProgram(): Promise<{ day: ProgramDay; exercises: DayExercise[] }[]> {
+  const activeProgram = await db.query<{ id: number }>(
+    `SELECT id FROM programs WHERE is_active = true ORDER BY id LIMIT 1`
+  );
+  const programId = activeProgram.rows[0]?.id;
+  if (!programId) return [];
+
+  const days = await db.query<ProgramDay>(
+    `SELECT id, name, day_order, warmup_text, cooldown_text
+     FROM program_days WHERE program_id = $1 ORDER BY day_order`,
+    [programId]
+  );
+
+  const result: { day: ProgramDay; exercises: DayExercise[] }[] = [];
+  for (const day of days.rows) {
+    const { exercises } = await getProgramDayWithExercises(day.id);
+    result.push({ day, exercises });
+  }
+  return result;
+}
+
+export async function updateDayExerciseTargets(
+  dayExerciseId: number,
+  params: { targetSets: number; targetRepLow: number; targetRepHigh: number; incrementKg: number }
+): Promise<void> {
+  await db.query(
+    `UPDATE day_exercises
+     SET target_sets = $1, target_rep_low = $2, target_rep_high = $3, progression_increment_kg = $4
+     WHERE id = $5`,
+    [params.targetSets, params.targetRepLow, params.targetRepHigh, params.incrementKg, dayExerciseId]
+  );
+}
+
+export async function addExerciseToDay(
+  programDayId: number,
+  exerciseId: number,
+  params: { targetSets: number; targetRepLow: number; targetRepHigh: number; incrementKg: number }
+): Promise<void> {
+  const maxOrder = await db.query<{ max: number | null }>(
+    `SELECT MAX(order_in_day) AS max FROM day_exercises WHERE program_day_id = $1`,
+    [programDayId]
+  );
+  const nextOrder = (maxOrder.rows[0].max ?? 0) + 1;
+  await db.query(
+    `INSERT INTO day_exercises
+       (program_day_id, exercise_id, order_in_day, target_sets, target_rep_low, target_rep_high, progression_increment_kg)
+     VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+    [
+      programDayId,
+      exerciseId,
+      nextOrder,
+      params.targetSets,
+      params.targetRepLow,
+      params.targetRepHigh,
+      params.incrementKg,
+    ]
+  );
+}
+
+export async function removeExerciseFromDay(dayExerciseId: number): Promise<void> {
+  await db.query(`DELETE FROM day_exercises WHERE id = $1`, [dayExerciseId]);
+}
+
+/** Swaps order_in_day with the adjacent exercise in the same day. Goes
+ * through a temporary sentinel value rather than a direct two-row swap,
+ * since (program_day_id, order_in_day) is unique and non-deferrable — a
+ * direct swap would collide mid-update. */
+export async function reorderDayExercise(dayExerciseId: number, direction: "up" | "down"): Promise<void> {
+  const current = await db.query<{ program_day_id: number; order_in_day: number }>(
+    `SELECT program_day_id, order_in_day FROM day_exercises WHERE id = $1`,
+    [dayExerciseId]
+  );
+  if (!current.rows[0]) return;
+  const { program_day_id, order_in_day } = current.rows[0];
+  const neighborOrder = direction === "up" ? order_in_day - 1 : order_in_day + 1;
+
+  const neighbor = await db.query<{ id: number }>(
+    `SELECT id FROM day_exercises WHERE program_day_id = $1 AND order_in_day = $2`,
+    [program_day_id, neighborOrder]
+  );
+  if (!neighbor.rows[0]) return; // already at the top/bottom
+
+  await db.query(`UPDATE day_exercises SET order_in_day = -1 WHERE id = $1`, [dayExerciseId]);
+  await db.query(`UPDATE day_exercises SET order_in_day = $1 WHERE id = $2`, [order_in_day, neighbor.rows[0].id]);
+  await db.query(`UPDATE day_exercises SET order_in_day = $1 WHERE id = $2`, [neighborOrder, dayExerciseId]);
+}
+
 export async function getLastSessionSets(exerciseId: number): Promise<SetRow[]> {
   const { rows } = await db.query<SetRow>(
     `SELECT s.id, s.exercise_id, s.set_number, s.weight_kg, s.reps, s.completed_at, s.client_id

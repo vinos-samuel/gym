@@ -246,7 +246,13 @@ export function ExerciseCard({
               </div>
               <button
                 type="button"
-                onClick={() => onLogSet(setNumber, weight, reps)}
+                onClick={() => {
+                  const looksAccidental = weight === 0 && exercise.equipment !== "Bodyweight";
+                  if (looksAccidental && !window.confirm(`Log this set at 0kg? ${exercise.name} isn't a bodyweight exercise.`)) {
+                    return;
+                  }
+                  onLogSet(setNumber, weight, reps);
+                }}
                 className="w-full rounded-xl bg-accent py-3 text-base font-medium text-accent-foreground active:opacity-80"
               >
                 Log set
