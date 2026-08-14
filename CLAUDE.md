@@ -27,7 +27,7 @@ Personal single-user fitness tracking PWA for Vinos. Source of truth for scope, 
 - `src/components/TrendChart.tsx` — reusable single-series SVG line chart (no charting library)
 - `src/lib/offlineQueue.ts` — localStorage retry queue for set writes made while offline
 - `public/exercises/*.svg` — hand-drawn exercise illustrations, real baked-in hex colors (not `currentColor` — see Current Sprint)
-- `src/app/globals.css` — color tokens: `--accent` (amber, primary actions), `--success` (green, progress/positive states)
+- `src/app/globals.css` — color tokens: `--background` (warm cream/charcoal), `--accent`/`--success` (sage green — same value, kept as separate tokens so they can diverge later), `--gold` (rare secondary accent, e.g. "stalled" badge). Neutrals use Tailwind's built-in `stone-*` (warm gray), not `zinc-*`.
 
 ## Current Sprint
 
@@ -55,6 +55,13 @@ Personal single-user fitness tracking PWA for Vinos. Source of truth for scope, 
 - Migration: `workout_substitutions.day_exercise_id` FK changed to `ON DELETE CASCADE`, since removing a day_exercise would otherwise be blocked by old substitution rows referencing that slot.
 - Also shipped: a confirm-before-logging guard when weight is 0kg on a non-bodyweight exercise (the Incline DB press incident from weeks ago).
 - All mutations (add/remove/update/reorder) verified against real production data with self-restoring tests before shipping.
+
+**2026-08-07 — Vigor-inspired redesign shipped:**
+- Vinos asked for a design pass referencing Vigor (vigorapp.fit) — presented a mockup artifact first, iterated once (v1 kept GYM's amber identity + invented a dark "floor mode" Vigor doesn't have; v2 corrected to Vigor's actual palette: cream background, sage green as the one primary accent, gold used once) before writing any code, per explicit "do not build anything yet" instruction.
+- Shipped: cream/sage/gold tokens in `globals.css`, Nunito replacing Geist Sans (Geist Mono kept for all numeric data), `zinc-*` → `stone-*` across every component, all 23 exercise illustrations re-tinted amber→sage.
+- Real bug caught by an actual visual check (not just build passing): several page containers used hardcoded `bg-white`/`bg-stone-50` instead of the `bg-background` token, so they didn't pick up the new cream color at all. Login page checked directly in the browser, in both light and dark, before shipping.
+- Nav buttons (Today/Progress/Program) switched from soft-fill to the same solid `bg-accent` treatment as Log set/Finish workout — they weren't reading as tappable.
+- One unified palette across Today/Progress/Program now — no more light/dark-mode split by screen, only density (spacing, type size) differs.
 
 **Big strategic thread, not a build decision yet:** Vinos wants to eventually merge GYM's exercise-tracking into **Vigor** (his App Store app — VibecodeApp stack, already tracks nutrition/calories-burned/water/weight) rather than keep GYM as a permanently separate tool. This is explicitly "much bigger" and needs its own planning conversation — it means porting logic to a different framework/design system, not copying files. Worth checking in on before investing in more GYM-only polish that might get thrown away in a port. Not blocking current work; Vinos chose to keep building GYM standalone (program editor) despite this.
 
