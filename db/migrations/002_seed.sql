@@ -97,15 +97,6 @@ JOIN (VALUES
 JOIN exercises e ON e.name = x.exercise_name;
 
 INSERT INTO profile (id, height_cm, target_kcal_low, target_kcal_high, target_protein_low, target_protein_high, activity_notes, health_notes)
-VALUES (
-  1,
-  179.1,
-  1900, 2100,
-  130, 145,
-  'Gym 4x/week, cycling 20-25 km/week, 6-8k daily steps, 7-8 hrs sleep (~11pm-6:30/7am), remote worker.',
-  'Back pain triggered by prolonged standing/walking — training program deliberately builds posterior-chain strength (hinge pattern, back extensions, anti-rotation core work) as a countermeasure. Goal is body recomposition (build muscle, reduce remaining fat layer), not a cut or a bulk.'
-);
+VALUES (1, NULL, NULL, NULL, NULL, NULL, 'Set your own activity notes', 'Set your own health notes');
 
-INSERT INTO body_metrics (metric_date, metric_type, value) VALUES
-(CURRENT_DATE, 'bodyweight_kg', 69.5),
-(CURRENT_DATE, 'waist_cm', 76.2);
+-- Body metrics are entered in the app; no seed values.

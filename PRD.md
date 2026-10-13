@@ -6,14 +6,14 @@ Personal training companion for Vinos. Single user. Opened on the phone 4–5x/w
 
 ## 1. Problem
 
-Vinos trains 4 days/week on a structured recomp program but has no tool that:
+I train 4 days/week on a structured program but has no tool that:
 1. Tells him *what to do today* (exercises, targets, visuals) without re-deriving from memory
 2. Lets him log weight × reps per set, one-handed, between sets, faster than a notes app
 3. Shows whether each lift is actually progressing over weeks/months, and when to add load
 4. Holds the program as editable data so it evolves as he rebuilds barbell confidence
 5. Tracks bodyweight + waist alongside training load (recomp = both signals matter)
 
-Notes apps lose structure; commercial apps (Strong, Hevy) are generic, subscription-walled, and don't hold his health context. The failure mode to design against: **if logging feels like a chore, the app is abandoned within two weeks.**
+Notes apps lose structure; commercial apps (Strong, Hevy) are generic, subscription-walled, and don't hold personal context. The failure mode to design against: **if logging feels like a chore, the app is abandoned within two weeks.**
 
 ## 2. Success criteria
 
@@ -33,7 +33,7 @@ Notes apps lose structure; commercial apps (Strong, Hevy) are generic, subscript
 | **Program editor** | The 4-day split (lower/squat-focus, push, lower/hinge-focus, pull) stored as data. Add/remove/reorder exercises, change set/rep/weight targets, swap days. No code changes needed to evolve the program. |
 | **Progression engine (simple, transparent)** | Double-progression rule per exercise: work within a rep range (e.g. 8–12); when all sets hit the top of the range at a given weight for 2 consecutive sessions → suggest +2.5 kg (upper) / +5 kg (lower/machine). Stall flag: no e1RM improvement in 4 sessions → surface it with options (deload 10%, swap variation, hold). Suggestions only — never auto-changes targets. |
 | **Progress screens** | Per-exercise trend (est. 1RM + volume over time), 4-week vs previous 4-week comparison, stalled-lift list. Bodyweight + waist logged in ~10 seconds, charted against training volume — the recomp view. |
-| **Health profile** | Baseline stats, kcal/protein targets, activity context, back-pain note — stored as structured data, editable. |
+| **Health profile** | Baseline stats, kcal/protein targets, activity context — stored as structured data, editable. |
 | **Daily nutrition quick-entry** | Two numbers a day: kcal + protein, entered in ≤10 seconds, charted against targets and bodyweight. Explicitly **not** a food database — if it ever grows toward food search/logging, that moves to Vigor. |
 | **Lab-ready data model** | `biomarkers` table (name, value, unit, reference range, date, source document) exists from day 1, empty until the blood report is uploaded. Nothing bolted on later. |
 | **PWA** | Home-screen installable, standalone (no browser chrome), fast load, works one-handed on a phone. Offline-tolerant logging: sets queue locally if signal drops mid-session, sync on reconnect. |
@@ -110,7 +110,7 @@ Gate: **M2 gets used at 2–3 real sessions before M3/M4 are built.** If the log
 
 ## Appendix A — Draft program v1 (for your review)
 
-4-day rotation, ~45–60 min/session, back-cautious: no barbell squats, no standing overhead barbell work, hinge pattern built deliberately. Rep ranges are the double-progression window. **All starting weights get set during your first logged session** — the app pre-fills from there on.
+4-day rotation, ~45–60 min/session, no barbell squats, no standing overhead barbell work, hinge pattern built deliberately. Rep ranges are the double-progression window. **All starting weights get set during your first logged session** — the app pre-fills from there on.
 
 **Day 1 — Lower (squat-focus)**
 | Exercise | Sets × reps | Note |
@@ -120,7 +120,7 @@ Gate: **M2 gets used at 2–3 real sessions before M3/M4 are built.** If the log
 | Leg extension | 3 × 10–15 | Quad isolation |
 | Seated leg curl | 3 × 10–15 | Hamstring balance |
 | Standing calf raise | 3 × 10–15 | |
-| Pallof press | 3 × 10/side | Anti-rotation core (back-pain countermeasure) |
+| Pallof press | 3 × 10/side | Anti-rotation core |
 
 **Day 2 — Push**
 | Exercise | Sets × reps | Note |
@@ -139,7 +139,7 @@ Gate: **M2 gets used at 2–3 real sessions before M3/M4 are built.** If the log
 | Back extension | 3 × 10–15 | Direct posterior-chain endurance |
 | KB swing | 3 × 12–15 | Hinge power, light-moderate |
 | Seated leg curl | 3 × 10–15 | |
-| Side plank | 3 × 30s/side | Lateral core (back-pain countermeasure) |
+| Side plank | 3 × 30s/side | Lateral core |
 
 **Day 4 — Pull**
 | Exercise | Sets × reps | Note |

@@ -18,7 +18,7 @@ UPDATE program_days SET
 WHERE day_order = 2;
 
 UPDATE program_days SET
-  warmup_text = 'Cat-cow x10, glute bridges x10, bodyweight hip hinges x10, leg swings — 3-5 min. Go slow given your back history — this is about waking up the hinge pattern, not loading it.',
+  warmup_text = 'Cat-cow x10, glute bridges x10, bodyweight hip hinges x10, leg swings — 3-5 min. Go slow — this is about waking up the hinge pattern, not loading it.',
   cooldown_text = 'Standing hamstring stretch, figure-4 glute stretch, child''s pose for the lower back — 20-30s each side.'
 WHERE day_order = 3;
 
